@@ -68,6 +68,7 @@ parser.add_argument('--sit', required=False, default=False, type=bool, help='Sho
 parser.add_argument('--using_wolf', required=False, type=bool, help='Set to True if using a wolf or other pet.')
 parser.add_argument('--farming_algo', required=False, type=FarmingAlgorithm, choices=list(FarmingAlgorithm),
                     default=FarmingAlgorithm.SINGLE_TARGET, help='Farming algorithm choice.')
+parser.add_argument('--quest', required=False, type=bool, help='Set to True if questing.')
 
 parser.add_argument('--window_setting', required=True, type=WindowSetting, choices=list(WindowSetting),
                     help='Windows display setting. Must be 1080P.')
