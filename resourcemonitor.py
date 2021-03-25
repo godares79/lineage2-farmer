@@ -7,11 +7,11 @@ import soundutil
 
 class ResourceMonitorThread(Thread):
 
-  def __init__(self, screen_monitor, using_wolf):
+  def __init__(self, screen_monitor, using_pet):
     Thread.__init__(self)
 
     self.screen_monitor = screen_monitor
-    self.using_wolf = using_wolf
+    self.using_pet = using_pet
 
     self.has_low_health = None
     self.has_low_mana = None
@@ -36,8 +36,8 @@ class ResourceMonitorThread(Thread):
       # else:
       #   self.has_low_mana = False
 
-      # If using a pet (wolf) then monitor the pet health and alert if it gets low.
-      if self.using_wolf:
+      # If using a pet then monitor the pet health and alert if it starts getting attacked.
+      if self.using_pet:
         pet_health_percent = self.screen_monitor.get_screen_object().get_pet_health_percent()
         if pet_health_percent < 100:
           soundutil.play_alert()

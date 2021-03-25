@@ -56,29 +56,36 @@ from windowsetting import WindowSetting
 
 
 parser = argparse.ArgumentParser(description='Simple farming program.')
-parser.add_argument('--manor', required=False, type=bool, default=False,
-                    help='True if farmer should plant and harvest seeds.')
-parser.add_argument('--spoil', required=False, type=bool, default=False,
-                    help='True if spoiling and sweeping should be done.')
-parser.add_argument('--target', required=True, help='String name of the target of the intended farming target. '
-                                                    'Can be a partial name.')
-parser.add_argument('--soulshot', required=False, type=SoulshotSetting, choices=list(SoulshotSetting),
-                    default=SoulshotSetting.NEVER, help='Soulshot setting.')
-parser.add_argument('--sit', required=False, default=False, type=bool, help='Should sit between attacks?')
-parser.add_argument('--using_wolf', required=False, type=bool, help='Set to True if using a wolf or other pet.')
-parser.add_argument('--farming_algo', required=False, type=FarmingAlgorithm, choices=list(FarmingAlgorithm),
-                    default=FarmingAlgorithm.SINGLE_TARGET, help='Farming algorithm choice.')
-parser.add_argument('--quest', required=False, type=bool, help='Set to True if questing.')
+parser.add_argument('-manor', dest='manor', default=False, action='store_true',
+                    help='Should plant and harvest seeds.')
+parser.add_argument('-spoil', dest='spoil', default=False, action='store_true',
+                    help='Should spoil and sweep mobs.')
+parser.add_argument('-target', dest='target', required=True,
+                    help='String name of the target of the intended farming target. Can be a partial name.')
+parser.add_argument('-soulshot', dest='soulshot', required=False,
+                    type=SoulshotSetting, choices=list(SoulshotSetting), default=SoulshotSetting.NEVER,
+                    help='Soulshot setting.')
+parser.add_argument('-sit', dest='sit', default=False, action='store_true',
+                    help='Should sit between attacks.')
+parser.add_argument('-pet', dest='pet', required=False, action='store_true',
+                    help='Specify if using a pet.')
+parser.add_argument('-farm_type', dest='farm_type', required=True,
+                    type=FarmingAlgorithm, choices=list(FarmingAlgorithm),
+                    help='Farming algorithm choice.')
+parser.add_argument('-quest', dest='quest', default=False, action='store_true',
+                    help='Specify if running quest(s).')
 
-parser.add_argument('--window_setting', required=True, type=WindowSetting, choices=list(WindowSetting),
-                    help='Windows display setting. Must be 1080P.')
-parser.add_argument('--l2_app', required=True, type=LineageApplication, choices=list(LineageApplication),
+parser.add_argument('-window_setting', dest='window_setting', required=True,
+                    type=WindowSetting, choices=list(WindowSetting),
+                    help='Windows display setting. Resolution must be 1080P.')
+parser.add_argument('-l2_app', dest='l2_app', required=True,
+                    type=LineageApplication, choices=list(LineageApplication),
                     help='The Lineage2 application that is being opened.')
 
-parser.add_argument('--testing', required=False, type=bool, help='If should use testing mode only.')
-parser.add_argument('--testing_file', required=False, help='Path to test file from venv root.')
-
-parser.add_argument('--sell_crops', required=False, type=bool, help='If should sell crops. Ignores all other args.')
+parser.add_argument('-testing', dest='testing', required=False, action='store_true',
+                    help='Specify if in testing mode.')
+parser.add_argument('-testing_file', required=False,
+                    help='Path to test file from venv root.')
 
 
 def create_and_start_capture_thread(window_setting, testing_mode=None, testing_file=None):
@@ -89,12 +96,12 @@ def create_and_start_capture_thread(window_setting, testing_mode=None, testing_f
 
 
 def create_and_start_farming_thread(args, capture_thread, resource_monitor):
-  if args.farming_algo == FarmingAlgorithm.SINGLE_TARGET:
+  if args.farm_type == FarmingAlgorithm.SINGLE_TARGET:
     farming_thread = singletarget.SingleTargetFarm(args, capture_thread, resource_monitor)
-  elif args.farming_algo == FarmingAlgorithm.HYBRID_SINGLE_TARGET:
+  elif args.farm_type == FarmingAlgorithm.HYBRID_SINGLE_TARGET:
     farming_thread = hybridsingletarget.HybridSingleTargetFarm(args, capture_thread, resource_monitor)
   else:
-    raise ValueError(f'Value of args.farming_algo is unimplemented: {args.farming_algo}')
+    raise ValueError(f'Value of args.farm_type is unimplemented: {args.farm_type}')
 
   farming_thread.daemon = True
   farming_thread.start()
@@ -108,9 +115,9 @@ def create_and_start_bot_protection_thread(screen_monitor, target):
   return anti_bot_protection
 
 
-def create_and_start_resource_monitor_thread(screen_monitor, using_wolf):
+def create_and_start_resource_monitor_thread(screen_monitor, using_pet):
   # A thread that will monitor health, mana, etc. and alert if anything goes outside of comfort areas.
-  resource_monitor = resourcemonitor.ResourceMonitorThread(screen_monitor, using_wolf)
+  resource_monitor = resourcemonitor.ResourceMonitorThread(screen_monitor, using_pet)
   resource_monitor.daemon = True
   resource_monitor.start()
   return resource_monitor
@@ -123,10 +130,10 @@ def main():
   print(f'\033[92mManoring: {args.manor}\033[0m')
   print(f'\033[92mSpoiling: {args.spoil}\033[0m')
   print(f'\033[92mSoulshot: {args.soulshot}\033[0m')
-  print(f'\033[92mUsing Wolf: {args.using_wolf}\033[0m')
+  print(f'\033[92mUsing Pet: {args.pet}\033[0m')
   print(f'\033[92mSit between attacks: {args.sit}\033[0m')
   print(f'\033[92mWindow Type: {args.window_setting}\033[0m')
-  print(f'\033[92mFarming Algorithm: {args.farming_algo}\033[0m\n')
+  print(f'\033[92mFarming Algorithm: {args.farm_type}\033[0m\n')
 
   if args.testing:
     print(f'In testing mode. File: {args.testing_file}')
@@ -138,12 +145,6 @@ def main():
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')
-    sys.exit(0)
-
-  if args.sell_crops:
-    # Selling crops will be much more specialized. Just a single thread that quickly clicks buttons needed to sell
-    # crops.
-    print('Crop selling not yet implemented!')
     sys.exit(0)
 
   bot_protection_thread = None
@@ -160,7 +161,7 @@ def main():
 
     # Start the resource monitor thread.
     if not resource_monitor_thread:
-      resource_monitor_thread = create_and_start_resource_monitor_thread(screen_monitor, args.using_wolf)
+      resource_monitor_thread = create_and_start_resource_monitor_thread(screen_monitor, args.pet)
 
     # Start farming flow in a new thread.
     farming_thread = create_and_start_farming_thread(args, screen_monitor, resource_monitor_thread)
