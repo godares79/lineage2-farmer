@@ -7,3 +7,4 @@ Only tested with Python 3.7.
 Has dependencies on:
 - Tesseract
 - OpenCV
+- Pillow
