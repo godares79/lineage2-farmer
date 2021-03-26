@@ -4,6 +4,31 @@ import time
 
 import inpututil
 from actions import manoraction, spoilaction
+from settings.soulshotsetting import SoulshotSetting
+
+
+def attack_mob(screen_monitor_thread, stop_event, soulshot_setting):
+  mob_health_percent = 100
+  used_soulshot = False
+
+  while mob_health_percent > 0:
+    if stop_event.is_set(): return
+    mob_health_percent = screen_monitor_thread.get_screen_object().get_target_health()
+
+    if soulshot_setting == SoulshotSetting.ONCE:
+      if mob_health_percent < 70 and not used_soulshot:
+        # Click on soulshot located at F10.
+        used_soulshot = True
+        inpututil.press_and_release_key(inpututil.F10)
+
+    if mob_health_percent == 0:
+      break
+    else:
+      # Check every 1 second for mob health.
+      time.sleep(1)
+
+  # Just give it about 0.5 second for things to clear out a bit.
+  time.sleep(random.uniform(0.6, 0.9))
 
 
 def perform_closing_actions(screen_monitor_thread,

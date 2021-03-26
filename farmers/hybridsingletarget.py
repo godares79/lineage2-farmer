@@ -96,45 +96,13 @@ class HybridSingleTargetFarm(Thread):
       if self.args.spoil:
         spoilaction.spoil(self.screen_capture_thread, self.stop_event)
 
-      if self.stop_event.is_set():
-        return
+      if self.stop_event.is_set(): return
+      actions.attack_mob(self.screen_capture_thread, self.stop_event, soulshot_setting=self.args.soulshot)
 
-      mob_health_percent = 100
-      index = 0
-      used_soulshot = False
-      while mob_health_percent > 0:
-        if self.stop_event.is_set():
-          return
-
-        mob_health_percent = self.screen_capture_thread.get_screen_object().get_target_health()
-
-        # Use a soulshot one time after we have already started attacking the mob a bit.
-        # That way our pet is not targetted.
-        if self.args.soulshot != SoulshotSetting.NEVER:
-          if mob_health_percent < 80 and not used_soulshot:
-            # Click on soulshot.
-            used_soulshot = True
-            inpututil.press_and_release_key(inpututil.F10)
-
-        if mob_health_percent == 0:
-          print(f'Mob Health:\033[91m {"0%": >3} \033[0m', end='\r')
-          break
-        else:
-          print(f'Mob Health: {mob_health_percent: >3}%', end='\r')
-          # Check every 1 second for mob health.
-          time.sleep(1)
-
-        index += 1
-
-      # Just give it about 0.5 second for things to clear out a bit.
-      time.sleep(random.uniform(0.6, 0.9))
-
+      if self.stop_event.is_set(): return
       actions.perform_closing_actions(
         self.screen_capture_thread, self.stop_event,
         should_harvest=self.args.manor, should_sweep=self.args.spoil, should_loot=True, should_sit=self.args.sit)
 
   def should_stop(self):
     self.stop_event.set()
-
-  def stopping(self):
-    return self.stop_event.is_set()
