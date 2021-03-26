@@ -1,21 +1,27 @@
 from enum import Enum
 from collections import namedtuple
 
+# The selection offset is an (x, y) pixel tuple that is the offset from the template location to where the click
+# should be done to select the monster.
 TargetProperties = namedtuple(
   'TargetProperties',
-  ['spawn_timeout', 'ocr_text', 'name_bitmap', 'full_name'])
+  ['spawn_timeout', 'ocr_text', 'name_bitmap', 'full_name', 'selection_offset'])
 
 
 def _properties_map():
   return {
     IntendedTarget.SPORE_FUNGUS: TargetProperties(
-      spawn_timeout=30, ocr_text='fungus', name_bitmap='spore_fungus.bmp', full_name='Spore Fungus'),
+      spawn_timeout=30, ocr_text='fungus', name_bitmap='spore_fungus.bmp', full_name='Spore Fungus',
+      selection_offset=(0, 10)),
     IntendedTarget.GRIZZLY: TargetProperties(
-      spawn_timeout=45, ocr_text='grizzly', name_bitmap='grizzly.bmp', full_name='Grizzly'),
+      spawn_timeout=45, ocr_text='grizzly', name_bitmap='grizzly.bmp', full_name='Grizzly',
+      selection_offset=(0, 10)),
     IntendedTarget.SHIELD_SKELETON: TargetProperties(
-      spawn_timeout=60, ocr_text='shield', name_bitmap='shield_skeleton.bmp', full_name='Shield Skeleton'),
+      spawn_timeout=60, ocr_text='shield', name_bitmap='shield_skeleton.bmp', full_name='Shield Skeleton',
+      selection_offset=(0, 10)),
     IntendedTarget.MONSTER_EYE_SEARCHER: TargetProperties(
-      spawn_timeout=75, ocr_text='searcher', name_bitmap='monster_eye_searcher.bmp', full_name='Monster Eye Searcher')
+      spawn_timeout=75, ocr_text='searcher', name_bitmap='monster_eye_searcher.bmp', full_name='Monster Eye Searcher',
+      selection_offset=(0, 10))
   }
 
 
