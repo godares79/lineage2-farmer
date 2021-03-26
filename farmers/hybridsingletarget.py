@@ -129,19 +129,9 @@ class HybridSingleTargetFarm(Thread):
       # Just give it about 0.5 second for things to clear out a bit.
       time.sleep(random.uniform(0.6, 0.9))
 
-      if self.stop_event.is_set():
-        return
-
-      if self.args.manor:
-        success = manoraction.harvest_corpse(self.screen_capture_thread)
-        print('The harvest was a success? {0}'.format(success))
-
-      if self.args.spoil:
-        spoilaction.sweep()
-
-      actions.loot(block=self.args.sit)
-      if self.args.sit:
-        actions.sit()
+      actions.perform_closing_actions(
+        self.screen_capture_thread, self.stop_event,
+        should_harvest=self.args.manor, should_sweep=self.args.spoil, should_loot=True, should_sit=self.args.sit)
 
   def should_stop(self):
     self.stop_event.set()

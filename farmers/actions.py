@@ -3,6 +3,38 @@ import random
 import time
 
 import inpututil
+from actions import manoraction, spoilaction
+
+
+def perform_closing_actions(screen_monitor_thread,
+                            stop_event,
+                            should_harvest=False,
+                            should_sweep=False,
+                            should_loot=False,
+                            should_sit=False):
+  if stop_event.is_set(): return
+  if should_harvest:
+    harvest(screen_monitor_thread)
+
+  if stop_event.is_set(): return
+  if should_sweep:
+    sweep()
+
+  if stop_event.is_set(): return
+  if should_loot:
+    loot(block=should_sit)
+
+  if stop_event.is_set(): return
+  if should_sit:
+    sit()
+
+
+def harvest(screen_monitor_thread):
+  manoraction.harvest_corpse(screen_monitor_thread)
+
+
+def sweep():
+  spoilaction.sweep()
 
 
 def loot(block=False):
