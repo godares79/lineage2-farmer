@@ -5,9 +5,8 @@ import time
 from threading import Thread
 
 import inpututil
-import manorutil
+from actions import manoraction, spoilaction
 import soundutil
-import spoilutil
 from soulshotsetting import SoulshotSetting
 
 
@@ -69,13 +68,13 @@ class SingleTargetFarm(Thread):
         return
 
       if self.args.manor:
-        manorutil.plant_seed(self.screen_capture_thread, self.stop_event)
+        manoraction.plant_seed(self.screen_capture_thread, self.stop_event)
 
       if self.stop_event.is_set():
         return
 
       if self.args.spoil:
-        spoilutil.spoil(self.screen_capture_thread, self.stop_event)
+        spoilaction.spoil(self.screen_capture_thread, self.stop_event)
 
       if self.stop_event.is_set():
         return
@@ -113,11 +112,11 @@ class SingleTargetFarm(Thread):
         return
 
       if self.args.manor:
-        success = manorutil.harvest_corpse(self.screen_capture_thread)
+        success = manoraction.harvest_corpse(self.screen_capture_thread)
         print('The harvest was a success? {0}'.format(success))
 
       if self.args.spoil:
-        spoilutil.sweep()
+        spoilaction.sweep()
 
       print('Looting...')
       # Use an ingame macro to loot and just pause for a while after before potentially sitting.
