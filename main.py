@@ -172,7 +172,7 @@ def main():
 
     keyboard.wait('`')
     print('`/~ pressed. Stopping all threads.')
-    farming_thread.stop()
+    farming_thread.should_stop()
     time.sleep(1)  # Sleep for 1 second after stopping so that we can spam the stop button.
 
 

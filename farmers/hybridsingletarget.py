@@ -136,7 +136,10 @@ class HybridSingleTargetFarm(Thread):
       if self.args.spoil:
         spoilaction.sweep()
 
-      actions.loot()
+      actions.loot(block=self.args.sit)
 
-  def stop(self):
+  def should_stop(self):
     self.stop_event.set()
+
+  def stopping(self):
+    return self.stop_event.is_set()

@@ -119,27 +119,20 @@ class SingleTargetFarm(Thread):
       if self.args.spoil:
         spoilaction.sweep()
 
-      actions.loot(block=True)
+      actions.loot(block=self.args.sit)
 
-      if self.stop_event.is_set():
-        return
-
+      if self.stop_event.is_set(): return
       if self.args.sit:
-        # Sit down.
-        inpututil.press_and_release_key(inpututil.F11)
-        time.sleep(random.uniform(1.0, 1.5))
+        actions.sit()
 
       # Do not continue the loop until the current dead target has disappeared (in the event that spoiling failed).
       while self.screen_capture_thread.get_screen_object().has_selected_target(self.args.target):
         time.sleep(1)
 
-      if self.stop_event.is_set():
-        return
+      if self.stop_event.is_set(): return
 
-      # At this point, if health is low then wait until health is high again before continuing.
-      # if self.resource_monitor_thread.has_low_health:
-      #   while not self.resource_monitor_thread.has_high_health:
-      #     time.sleep(5)
-
-  def stop(self):
+  def should_stop(self):
     self.stop_event.set()
+
+  def stopping(self):
+    return self.stop_event.is_set()
