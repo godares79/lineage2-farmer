@@ -47,7 +47,7 @@ import keyboard
 
 import antibotprotection
 from settings.farmingalgorithm import FarmingAlgorithm
-from farmingflows import singletarget, hybridsingletarget
+from farmers import singletarget, hybridsingletarget
 import resourcemonitor
 import screenmanagement
 from settings.lineageapplication import LineageApplication
