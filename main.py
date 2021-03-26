@@ -46,13 +46,13 @@ import time
 import keyboard
 
 import antibotprotection
-from farmingalgorithm import FarmingAlgorithm
+from settings.farmingalgorithm import FarmingAlgorithm
 from farmingflows import singletarget, hybridsingletarget
 import resourcemonitor
 import screenmanagement
-from lineageapplication import LineageApplication
-from soulshotsetting import SoulshotSetting
-from windowsetting import WindowSetting
+from settings.lineageapplication import LineageApplication
+from settings.soulshotsetting import SoulshotSetting
+from settings.windowsetting import WindowSetting
 
 
 parser = argparse.ArgumentParser(description='Simple farming program.')

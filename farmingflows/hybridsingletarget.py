@@ -9,7 +9,7 @@ from threading import Thread
 import inpututil
 from actions import manoraction, spoilaction
 import soundutil
-from soulshotsetting import SoulshotSetting
+from settings.soulshotsetting import SoulshotSetting
 
 
 class HybridSingleTargetFarm(Thread):

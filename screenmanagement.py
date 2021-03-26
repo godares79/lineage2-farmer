@@ -14,7 +14,7 @@ import os
 import threading
 import time
 from enum import Enum
-from queue import Queue, LifoQueue
+from queue import Queue
 from threading import Thread
 
 import cv2
@@ -24,7 +24,7 @@ import pytesseract
 import win32gui
 from PIL import Image, ImageDraw
 
-from windowsetting import WindowSetting
+from settings.windowsetting import WindowSetting
 
 
 # Queue for passing screenshot entries from the capture thread to the writer thread.
