@@ -345,7 +345,7 @@ class ScreenObject:
       return False
 
     # TODO: Using OpenCV template matching... I should use this in the future.
-    searcher_text = cv2.imread(os.path.join('images', 'MonsterEyeSearcher_Name.bmp'))
+    searcher_text = cv2.imread(os.path.join('images', 'monster_eye_searcher.bmp'))
     template_result = cv2.matchTemplate(cv_img, searcher_text, cv2.TM_CCOEFF_NORMED)
     match_location = np.where(template_result > 0.7)
     if len(match_location[0]) >= 1 or len(match_location[1]) >= 1:
