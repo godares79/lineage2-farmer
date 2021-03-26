@@ -9,6 +9,7 @@ from threading import Thread
 import inpututil
 from actions import manoraction, spoilaction
 import soundutil
+from farmers import actions
 from settings.soulshotsetting import SoulshotSetting
 
 
@@ -135,9 +136,7 @@ class HybridSingleTargetFarm(Thread):
       if self.args.spoil:
         spoilaction.sweep()
 
-      print('Looting...')
-      # I'm using a macro ingame that will loot several times in a row.
-      inpututil.press_and_release_key(inpututil.F6)
+      actions.loot()
 
   def stop(self):
     self.stop_event.set()

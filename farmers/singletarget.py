@@ -7,6 +7,7 @@ from threading import Thread
 import inpututil
 from actions import manoraction, spoilaction
 import soundutil
+from farmers import actions
 from settings.soulshotsetting import SoulshotSetting
 
 
@@ -118,10 +119,7 @@ class SingleTargetFarm(Thread):
       if self.args.spoil:
         spoilaction.sweep()
 
-      print('Looting...')
-      # Use an ingame macro to loot and just pause for a while after before potentially sitting.
-      inpututil.press_and_release_key(inpututil.F6)
-      time.sleep(random.uniform(3.0, 5.0))
+      actions.loot(block=True)
 
       if self.stop_event.is_set():
         return
