@@ -19,3 +19,9 @@ def sit():
   # The sit macro is expected to be present at F11.
   inpututil.press_and_release_key(inpututil.F11)
   time.sleep(random.uniform(1.0, 1.5))
+
+
+def stand():
+  # The stand macro is expected to be present at F12.
+  inpututil.press_and_release_key(inpututil.F12)
+  time.sleep(random.uniform(1.0, 1.5))

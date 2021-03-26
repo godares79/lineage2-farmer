@@ -81,6 +81,9 @@ class HybridSingleTargetFarm(Thread):
             soundutil.play_alert()
             time.sleep(5)
 
+      if self.args.sit:
+        actions.stand()
+
       if self.stop_event.is_set():
         return
 

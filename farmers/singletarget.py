@@ -61,9 +61,7 @@ class SingleTargetFarm(Thread):
           time.sleep(5)
 
       if self.args.sit:
-        # Stand up just incase sitting.
-        inpututil.press_and_release_key(inpututil.F12)
-        time.sleep(random.uniform(1.0, 1.5))
+        actions.stand()
 
       if self.stop_event.is_set():
         return
