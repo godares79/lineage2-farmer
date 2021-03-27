@@ -140,7 +140,7 @@ def main():
     # time.sleep(3)
     # print(f'Has target spawned: {screen_monitor.get_screen_object().has_target_spawned(args.target)}')
 
-    soundutil.alert()
+    soundutil.notify()
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')
