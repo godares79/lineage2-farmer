@@ -136,11 +136,9 @@ def main():
 
   if args.testing:
     print(f'In testing mode. File: {args.testing_file}')
-    # screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
-    # time.sleep(3)
-    # print(f'Has target spawned: {screen_monitor.get_screen_object().has_target_spawned(args.target)}')
-
-    soundutil.notify()
+    screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
+    time.sleep(3)
+    print(f'Spoil Status: {screen_monitor.get_screen_object().get_spoil_status()}')
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')

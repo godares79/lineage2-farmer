@@ -250,9 +250,15 @@ class ScreenObject:
     # True if spoil successful, False otherwise.
     # First 3 rows pixel bounds: (21, 837) -> (341, 884)
     # Use a pixel color match because it is more accurate than OCR.
-    system_crop_img = self.pillow_image.crop((21, 837, 341, 884))
+
+    # The first 3 rows of the system log.
+    # system_crop_img = self.pillow_image.crop((21, 837, 341, 884))
+
+    # The onscreen text that displays when successful.
+    system_crop_img = self.pillow_image.crop((692, 155, 747, 179))
+
     cvarr = cv2.cvtColor(np.asarray(system_crop_img), cv2.COLOR_RGB2BGR)
-    mask = cv2.inRange(cvarr, (117, 223, 64), (117, 223, 64))
+    mask = cv2.inRange(cvarr, (115, 220, 62), (120, 230, 67))
     if len(cvarr[mask != 0]) > 0:
       return True
     return False

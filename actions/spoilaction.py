@@ -30,10 +30,6 @@ class SpoilThread(Thread):
     self.stop_event = stop_event
 
   def run(self):
-    # Use the spoil skill. Verify that spoiling was successful. Keep trying while mob is still alive.
-    # TODO: There might be a race condition I can exploit to sweep multiple times.... Need to press the button very
-    # very fast in succession and can sweep twice. Does lag play a role? I'm not sure. But something to try eventually.
-
     # TODO: With L2OFF (hellscape) need to check for a target out of range alert and re-do spoil if it happens.
     while True:
       if self.stop_event.is_set():
@@ -52,7 +48,7 @@ class SpoilThread(Thread):
         if index > 10:
           break
 
-        time.sleep(0.5)
+        time.sleep(0.3)
         spoil_status = self.screen_monitor_thread.get_screen_object().get_spoil_status()
 
       if spoil_status:
