@@ -250,13 +250,7 @@ class ScreenObject:
     # True if spoil successful, False otherwise.
     # First 3 rows pixel bounds: (21, 837) -> (341, 884)
     # Use a pixel color match because it is more accurate than OCR.
-
-    # The first 3 rows of the system log.
-    # system_crop_img = self.pillow_image.crop((21, 837, 341, 884))
-
-    # The onscreen text that displays when successful.
-    system_crop_img = self.pillow_image.crop((692, 155, 747, 179))
-
+    system_crop_img = self.pillow_image.crop((21, 837, 341, 884))
     cvarr = cv2.cvtColor(np.asarray(system_crop_img), cv2.COLOR_RGB2BGR)
     mask = cv2.inRange(cvarr, (115, 220, 62), (120, 230, 67))
     if len(cvarr[mask != 0]) > 0:
@@ -264,6 +258,9 @@ class ScreenObject:
     return False
 
   def is_spoil_applied(self):
+    # TODO: There is a bug here. The spoil applied check will return True if it sees the "used sweeper" text because
+    # it has the same pixel values. This then throws off the entire spoiling algorithm.
+
     # First 3 rows pixel bounds: (21, 837) -> (341, 884)
     # Use a pixel color match because it is much faster than OCR.
     system_crop_img = self.pillow_image.crop((21, 837, 341, 884))

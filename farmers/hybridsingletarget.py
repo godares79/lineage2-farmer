@@ -13,12 +13,11 @@ from farmers import actions
 
 class HybridSingleTargetFarm(Thread):
 
-  def __init__(self, args, screen_capture_thread, resource_monitor_thread):
+  def __init__(self, args, screen_capture_thread):
     Thread.__init__(self)
     self.stop_event = threading.Event()
     self.args = args
     self.screen_capture_thread = screen_capture_thread
-    self.resource_monitor_thread = resource_monitor_thread  # Not used currently.
 
   def run(self):
     random.seed()

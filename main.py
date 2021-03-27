@@ -98,7 +98,7 @@ def create_and_start_capture_thread(window_setting, testing_mode=None, testing_f
 
 def create_and_start_farming_thread(args, capture_thread, resource_monitor):
   if args.farm_type == FarmingAlgorithm.HYBRID_SINGLE_TARGET:
-    farming_thread = hybridsingletarget.HybridSingleTargetFarm(args, capture_thread, resource_monitor)
+    farming_thread = hybridsingletarget.HybridSingleTargetFarm(args, capture_thread)
   else:
     raise ValueError(f'Value of args.farm_type is unimplemented: {args.farm_type}')
 
@@ -138,7 +138,7 @@ def main():
     print(f'In testing mode. File: {args.testing_file}')
     screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
     time.sleep(3)
-    print(f'Spoil Status: {screen_monitor.get_screen_object().get_spoil_status()}')
+    print(f'Spoil Status: {screen_monitor.get_screen_object().is_spoil_applied()}')
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')
