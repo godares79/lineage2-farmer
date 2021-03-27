@@ -5,6 +5,6 @@ Meant to run on Windows. Stuff like mouse movement and keypress injection is win
 Only tested with Python 3.7.
 
 Has dependencies on:
-- Tesseract
+- Tesseract 5 (Tesseract 4 is much less accurate than 5!)
 - OpenCV
 - Pillow
