@@ -5,18 +5,18 @@ import time
 PUL = ctypes.POINTER(ctypes.c_ulong)
 
 # ScanCode constants that I care about.
-F1 = 0x3B
-F2 = 0x3C
-F3 = 0x3D
-F4 = 0x3E
-F5 = 0x3F
-F6 = 0x40
-F7 = 0x41
-F8 = 0x42
-F9 = 0x43
-F10 = 0x44
-F11 = 0x57
-F12 = 0x58
+NEXT_TARGET = 0x3B       # F1
+TARGET_MACRO = 0x3C      # F2
+ATTACK = 0x3D            # F3
+SEED = 0x3E              # F4
+SPOIL_MACRO = 0x3F       # F5
+HARVEST = 0x40           # F6
+SWEEP = 0x41             # F7
+LOOT_MACRO = 0x42        # F8
+HEALING_POTION = 0x43    # F9
+SOULSHOT = 0x44          # F10
+SIT_MACRO = 0x57         # F11
+STAND_MACRO = 0x58       # F12
 CTRL = 0x1D
 SHIFT = 0x2A
 ALT = 0x38

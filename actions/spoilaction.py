@@ -6,8 +6,6 @@ import time
 from threading import Thread
 
 import inpututil
-import soundutil
-from screenmanagement import ScreenObject
 
 
 def spoil(screen_monitor_thread, stop_event):
@@ -18,7 +16,7 @@ def spoil(screen_monitor_thread, stop_event):
 
 def sweep():
   # Use the sweeper skill. Always succeeds if there is anything to be swept.
-  inpututil.press_and_release_key(inpututil.F5)
+  inpututil.press_and_release_key(inpututil.SWEEP)
   time.sleep(random.uniform(0.5, 1.0))
 
 
@@ -35,7 +33,7 @@ class SpoilThread(Thread):
       if self.stop_event.is_set():
         return
 
-      inpututil.press_and_release_key(inpututil.F3)
+      inpututil.press_and_release_key(inpututil.SPOIL_MACRO)
 
       # Wait for the spoil to apply. It may take some time to reach the target and start spoiling.
       while not self.screen_monitor_thread.get_screen_object().is_spoil_applied():

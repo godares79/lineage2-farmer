@@ -46,8 +46,7 @@ class HybridSingleTargetFarm(Thread):
           if self.stop_event.is_set():
             return
 
-          # Press the F1 key to select the target.
-          inpututil.press_and_release_key(inpututil.F1)
+          inpututil.press_and_release_key(inpututil.NEXT_TARGET)
           time.sleep(random.uniform(0.8, 1.0))
 
           if self.screen_capture_thread.get_screen_object().has_selected_target(self.args.target):

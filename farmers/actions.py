@@ -65,9 +65,8 @@ def attack_mob(screen_monitor_thread, stop_event, soulshot_setting):
 
     if soulshot_setting == SoulshotSetting.ONCE:
       if mob_health_percent < 70 and not used_soulshot:
-        # Click on soulshot located at F10.
         used_soulshot = True
-        inpututil.press_and_release_key(inpututil.F10)
+        inpututil.press_and_release_key(inpututil.SOULSHOT)
 
     if mob_health_percent == 0:
       break
@@ -111,20 +110,17 @@ def sweep():
 
 
 def loot(block=False):
-  # The loot macro is expected to be present at F6.
-  inpututil.press_and_release_key(inpututil.F6)
+  inpututil.press_and_release_key(inpututil.LOOT_MACRO)
 
   if block:
     time.sleep(random.uniform(3.0, 5.0))
 
 
 def sit():
-  # The sit macro is expected to be present at F11.
-  inpututil.press_and_release_key(inpututil.F11)
+  inpututil.press_and_release_key(inpututil.SIT_MACRO)
   time.sleep(random.uniform(1.0, 1.5))
 
 
 def stand():
-  # The stand macro is expected to be present at F12.
-  inpututil.press_and_release_key(inpututil.F12)
+  inpututil.press_and_release_key(inpututil.STAND_MACRO)
   time.sleep(random.uniform(1.0, 1.5))
