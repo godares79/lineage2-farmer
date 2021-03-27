@@ -40,6 +40,6 @@ class ResourceMonitorThread(Thread):
       if self.using_pet:
         pet_health_percent = self.screen_monitor.get_screen_object().get_pet_health_percent()
         if pet_health_percent < 100:
-          soundutil.play_alert()
+          soundutil.alert()
 
       time.sleep(5)

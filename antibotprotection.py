@@ -19,32 +19,32 @@ class AntiBotProtection(Thread):
     while True:
       if self.screen_monitor_thread.get_screen_object().is_antibot_protection_present():
         print('Antibot Protection present!')
-        soundutil.play_alert()
+        soundutil.alert()
         time.sleep(5)
 
       if self.screen_monitor_thread.get_screen_object().has_been_whispered():
         print('Whisper received!')
-        soundutil.play_alert()
+        soundutil.alert()
         time.sleep(5)
 
       if self.screen_monitor_thread.get_screen_object().has_local_chat():
         print('Local chat received!')
-        soundutil.play_alert()
+        soundutil.alert()
         time.sleep(5)
 
       if self.screen_monitor_thread.get_screen_object().has_shout_chat():
         print('Shout chat received!')
-        soundutil.play_alert()
+        soundutil.alert()
         time.sleep(5)
 
       if self.screen_monitor_thread.get_screen_object().antibot_text_on_screen():
         print('Antibot text recognized on screen!')
-        soundutil.play_alert()
+        soundutil.alert()
         time.sleep(5)
 
       if self.screen_monitor_thread.get_screen_object().unknown_dialog_present():
         print('Unrecognized dialog displayed on screen!')
-        soundutil.play_alert()
+        soundutil.alert()
         time.sleep(5)
 
       time.sleep(5)

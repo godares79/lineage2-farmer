@@ -36,7 +36,7 @@ class HybridSingleTargetFarm(Thread):
           if spawn_timeout_counter >= 55 and spawn_timeout_counter % 5 == 0:
             # Send an audio alert if the target hasn't spawned for some time.
             print(f'\033[91m{self.args.target} has not spawned after {spawn_timeout_counter} seconds!\033[0m')
-            soundutil.play_alert()
+            soundutil.warn()
 
           spawn_timeout_counter += 1
           time.sleep(1)
@@ -56,7 +56,7 @@ class HybridSingleTargetFarm(Thread):
             break
           else:
             print(f'\033[91mFailed to cycle to target: {self.args.target}!\033[0m')
-            soundutil.play_alert()
+            soundutil.warn()
             time.sleep(5)
 
       if self.stop_event.is_set(): return

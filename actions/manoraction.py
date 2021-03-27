@@ -17,7 +17,7 @@ def plant_seed(screen_capture_thread, stop_event):
       return
 
     if itercount > 50 and itercount % 5 == 0:
-      soundutil.play_alert()
+      soundutil.warn()
 
     if screen_capture_thread.get_screen_object().has_started_sowing():
       print('Planted seed.')
