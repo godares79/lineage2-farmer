@@ -258,15 +258,11 @@ class ScreenObject:
     return False
 
   def is_spoil_applied(self):
-    # TODO: There is a bug here. The spoil applied check will return True if it sees the "used sweeper" text because
-    # it has the same pixel values. This then throws off the entire spoiling algorithm.
-
+    # True if spoil has been applied, False otherwise.
     # First 3 rows pixel bounds: (21, 837) -> (341, 884)
-    # Use a pixel color match because it is much faster than OCR.
+    # Use OCR to match text as sweeper and spoil system message are same color.
     system_crop_img = self.pillow_image.crop((21, 837, 341, 884))
-    cvarr = cv2.cvtColor(np.asarray(system_crop_img), cv2.COLOR_RGB2BGR)
-    mask = cv2.inRange(cvarr, (248, 166, 105), (248, 166, 105))
-    if len(cvarr[mask != 0]) > 0:
+    if 'use spoil' in self._process_text(system_crop_img):
       return True
     return False
 
@@ -509,24 +505,22 @@ class ScreenObject:
       return self._system_message_text
 
     system_crop_img = self.pillow_image.crop((21, 768, 345, 884))
+    self._system_message_text = self._process_text(system_crop_img)
+    return self._system_message_text
 
-    # Preprocess the text to make it easier to read. I should really try to use Tesseract 5 if possible.
-    # Seems not easily possible with tesserocr. I tried the piltesseract module, but it has problems piping data
-    # to tesseract 5. But pytesseract seems to work!!!
-    for i in range(system_crop_img.size[0]):
-      for j in range(system_crop_img.size[1]):
-        pixel = system_crop_img.getpixel((i, j))
+  def _process_text(self, image):
+    for i in range(image.size[0]):
+      for j in range(image.size[1]):
+        pixel = image.getpixel((i, j))
         if pixel[0] + pixel[1] + pixel[2] > 300:
-          system_crop_img.putpixel((i, j), (255, 255, 255))
+          image.putpixel((i, j), (255, 255, 255))
         else:
-          system_crop_img.putpixel((i, j), (0, 0, 0))
+          image.putpixel((i, j), (0, 0, 0))
 
-    system_crop_img = system_crop_img.resize((system_crop_img.size[0] * 3, system_crop_img.size[1] * 3))
+    system_crop_img = image.resize((image.size[0] * 3, image.size[1] * 3))
 
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
-    self._system_message_text = pytesseract.image_to_string(system_crop_img).strip().lower()
-
-    return self._system_message_text
+    return pytesseract.image_to_string(system_crop_img).strip().lower()
 
 
 class HistoryOutputThread(Thread):

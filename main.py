@@ -139,6 +139,7 @@ def main():
     screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
     time.sleep(3)
     print(f'Spoil Status: {screen_monitor.get_screen_object().is_spoil_applied()}')
+    print(f'Spoil Applied: {screen_monitor.get_screen_object().get_spoil_status()}')
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')
