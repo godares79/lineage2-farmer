@@ -7,10 +7,8 @@ import time
 from threading import Thread
 
 import inpututil
-from actions import manoraction, spoilaction
 import soundutil
 from farmers import actions
-from settings.soulshotsetting import SoulshotSetting
 
 
 class HybridSingleTargetFarm(Thread):
@@ -25,29 +23,9 @@ class HybridSingleTargetFarm(Thread):
   def run(self):
     random.seed()
 
-    while not self.screen_capture_thread.get_screen_object():
-      # Hack. Waiting for the screen capture thread to begin capturing stuff.
-      # I don't know why this has just started now...
-      time.sleep(1)
-
     while not self.stop_event.is_set():
-      spawn_timeout_counter = 0
-      spawn_timeout_limit = 40  # 0.25s * 40 = 10 seconds
-      target_selected = False  # By default, expect no target to be already selected.
-
-      # Wait for spawn_timeout_limit/4 seconds to see if a target is manually selected (a target that is not dead).
-      # If not selected in the limit, go into regular farm mode.
-      while not target_selected and spawn_timeout_counter < spawn_timeout_limit:
-        if self.stop_event.is_set():
-          return
-
-        if self.screen_capture_thread.get_screen_object().has_selected_target(self.args.target):
-          mob_health_percent = self.screen_capture_thread.get_screen_object().get_target_health()
-          if mob_health_percent and mob_health_percent > 0:
-            target_selected = True
-            break
-        spawn_timeout_counter += 1
-        time.sleep(0.25)
+      target_selected = actions.wait_for_manually_selected_target(
+        self.screen_capture_thread, self.stop_event, self.args.target)
 
       if not target_selected:
         spawn_timeout_counter = 0
@@ -81,20 +59,10 @@ class HybridSingleTargetFarm(Thread):
             soundutil.play_alert()
             time.sleep(5)
 
-      if self.args.sit:
-        actions.stand()
-
-      if self.stop_event.is_set():
-        return
-
-      if self.args.manor:
-        manoraction.plant_seed(self.screen_capture_thread, self.stop_event)
-
-      if self.stop_event.is_set():
-        return
-
-      if self.args.spoil:
-        spoilaction.spoil(self.screen_capture_thread, self.stop_event)
+      if self.stop_event.is_set(): return
+      actions.perform_starting_actions(
+        self.screen_capture_thread, self.stop_event,
+        should_stand=self.args.sit, should_seed=self.args.manor, should_spoil=self.args.spoil)
 
       if self.stop_event.is_set(): return
       actions.attack_mob(self.screen_capture_thread, self.stop_event, soulshot_setting=self.args.soulshot)

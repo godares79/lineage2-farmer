@@ -7,6 +7,54 @@ from actions import manoraction, spoilaction
 from settings.soulshotsetting import SoulshotSetting
 
 
+def wait_for_manually_selected_target(screen_monitor_thread, stop_event, target):
+  # Waits up to 10 seconds for a target to be manually selected.
+  # Returns True if a target is selected. Returns false if not.
+  spawn_timeout_counter = 0
+  sleep_increment_seconds = 0.25
+  spawn_timeout_limit = 40  # 0.25s * 40 = 10 seconds
+  target_selected = False
+
+  while not target_selected and spawn_timeout_counter < spawn_timeout_limit:
+    if stop_event.is_set(): return False
+
+    if screen_monitor_thread.get_screen_object().has_selected_target(target):
+      mob_health_percent = screen_monitor_thread.get_screen_object().get_target_health()
+      if mob_health_percent and mob_health_percent > 0:
+        return True
+
+    spawn_timeout_counter += 1
+    time.sleep(sleep_increment_seconds)
+
+  return False
+
+
+def perform_starting_actions(screen_monitor_thread,
+                             stop_event,
+                             should_stand=False,
+                             should_seed=False,
+                             should_spoil=False):
+  if stop_event.is_set(): return
+  if should_stand:
+    stand()
+
+  if stop_event.is_set(): return
+  if should_seed:
+    seed(screen_monitor_thread, stop_event)
+
+  if stop_event.is_set(): return
+  if should_spoil:
+    spoil(screen_monitor_thread, stop_event)
+
+
+def seed(screen_monitor_thread, stop_event):
+  manoraction.plant_seed(screen_monitor_thread, stop_event)
+
+
+def spoil(screen_monitor_thread, stop_event):
+  spoilaction.spoil(screen_monitor_thread, stop_event)
+
+
 def attack_mob(screen_monitor_thread, stop_event, soulshot_setting):
   mob_health_percent = 100
   used_soulshot = False
@@ -63,8 +111,6 @@ def sweep():
 
 
 def loot(block=False):
-  print('Looting...')
-
   # The loot macro is expected to be present at F6.
   inpututil.press_and_release_key(inpututil.F6)
 

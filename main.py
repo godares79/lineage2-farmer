@@ -48,7 +48,7 @@ import keyboard
 import antibotprotection
 import soundutil
 from settings.farmingalgorithm import FarmingAlgorithm
-from farmers import singletarget, hybridsingletarget
+from farmers import hybridsingletarget
 import resourcemonitor
 import screenmanagement
 from settings.lineageapplication import LineageApplication
@@ -97,9 +97,7 @@ def create_and_start_capture_thread(window_setting, testing_mode=None, testing_f
 
 
 def create_and_start_farming_thread(args, capture_thread, resource_monitor):
-  if args.farm_type == FarmingAlgorithm.SINGLE_TARGET:
-    farming_thread = singletarget.SingleTargetFarm(args, capture_thread, resource_monitor)
-  elif args.farm_type == FarmingAlgorithm.HYBRID_SINGLE_TARGET:
+  if args.farm_type == FarmingAlgorithm.HYBRID_SINGLE_TARGET:
     farming_thread = hybridsingletarget.HybridSingleTargetFarm(args, capture_thread, resource_monitor)
   else:
     raise ValueError(f'Value of args.farm_type is unimplemented: {args.farm_type}')
