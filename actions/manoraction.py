@@ -20,7 +20,6 @@ def plant_seed(screen_capture_thread, stop_event):
       soundutil.warn()
 
     if screen_capture_thread.get_screen_object().has_started_sowing():
-      print('Planted seed.')
       return
 
     itercount += 1

@@ -56,11 +56,9 @@ class SpoilThread(Thread):
         spoil_status = self.screen_monitor_thread.get_screen_object().get_spoil_status()
 
       if spoil_status:
-        print('Spoil succeeded.')
         return
 
       if not spoil_status:
-        print('Spoil failed. Retrying...')
         time.sleep(6)
         if self.screen_monitor_thread.get_screen_object().get_target_health() == 0:
           return
