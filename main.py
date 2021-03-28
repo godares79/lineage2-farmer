@@ -75,6 +75,8 @@ parser.add_argument('-farm_type', dest='farm_type', required=True,
                     help='Farming algorithm choice.')
 parser.add_argument('-quest', dest='quest', default=False, action='store_true',
                     help='Specify if running quest(s).')
+parser.add_argument('-use_health_potions', dest='use_health_potions', default=False, action='store_true',
+                    help='Specify if health potions should be used when health gets low.')
 
 parser.add_argument('-window_setting', dest='window_setting', required=True,
                     type=WindowSetting, choices=list(WindowSetting),
