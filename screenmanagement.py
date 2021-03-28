@@ -499,6 +499,22 @@ class ScreenObject:
     # checking tooltips, icon hotkeys, etc. I dunno...
     pass
 
+  def get_attackers(self):
+    # Get the attacker lines from the primary text box.
+    # - Crop box: (21, 900) -> (343, 1031)
+    # - RGB Color: (215, 121, 49)
+    primary_textbox_cropped_img = self.pillow_image.crop((21, 900, 343, 1031))
+    cv_img = cv2.cvtColor(np.asarray(primary_textbox_cropped_img), cv2.COLOR_RGB2BGR)
+    mask = cv2.inRange(cv_img, (49, 121, 215), (49, 121, 215))
+    cv_img[mask == 0] = (0, 0, 0)
+    cv_img[mask != 0] = (255, 255, 255)
+
+    primary_textbox_processed = Image.fromarray(cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB))
+    system_crop_img = primary_textbox_processed.resize(
+      (primary_textbox_processed.size[0] * 3, primary_textbox_processed.size[1] * 3))
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+    return pytesseract.image_to_string(system_crop_img).strip().lower()
+
   def _get_system_message_text(self):
     if self._system_message_text:
       # Only parse the first time.
