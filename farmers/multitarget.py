@@ -82,6 +82,7 @@ class SimpleMultiTargetFarm(Thread):
 
       # At this point a valid target is selected and we can go through the motions.
       # TODO: If while running to the target it starts to lose health then it is being attacked, notify if so.
+      # TODO: Add attacker monitoring at this point.
 
       if self.stop_event.is_set(): return
       actions.perform_starting_actions(
