@@ -46,7 +46,6 @@ import time
 import keyboard
 
 import antibotprotection
-import soundutil
 from settings.farmingalgorithm import FarmingAlgorithm
 from farmers import hybridsingletarget, multitarget
 import resourcemonitor
