@@ -515,6 +515,17 @@ class ScreenObject:
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
     return pytesseract.image_to_string(system_crop_img).strip().lower()
 
+  def is_target_unseen(self):
+    # True if target can not be seen, False if not.
+    # First row pixel bounds: (21, 866) -> (128, 884)
+    # Use a pixel color match because it is more accurate than OCR.
+    system_crop_img = self.pillow_image.crop((21, 866, 128, 884))
+    cvarr = cv2.cvtColor(np.asarray(system_crop_img), cv2.COLOR_RGB2BGR)
+    mask = cv2.inRange(cvarr, (10, 250, 10), (20, 255, 20))
+    if len(cvarr[mask != 0]) > 0:
+      return True
+    return False
+
   def _get_system_message_text(self):
     if self._system_message_text:
       # Only parse the first time.

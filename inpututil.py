@@ -20,6 +20,7 @@ STAND_MACRO = 0x58       # F12
 CTRL = 0x1D
 SHIFT = 0x2A
 ALT = 0x38
+CLEAR_TARGET = 0x01      # ESCAPE
 
 
 class KeyBdInput(ctypes.Structure):
