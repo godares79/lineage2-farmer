@@ -5,7 +5,7 @@ from threading import Thread
 
 import inpututil
 import soundutil
-from farmers import actions
+from farmers import actions, aggromonitor
 
 
 class SimpleMultiTargetFarm(Thread):
@@ -100,7 +100,19 @@ class SimpleMultiTargetFarm(Thread):
         self.screen_capture_thread, self.stop_event,
         should_harvest=self.args.manor, should_sweep=self.args.spoil, should_loot=True, should_sit=False)
 
-      # TODO: Should sit down and rest if health or mana gets too low. Monitor to determine if attacked at this time.
+      if self.resource_monitor_thread.has_low_health or self.resource_monitor_thread.has_low_mana:
+        # Sit down and rest until both mana and health are considered high. Monitor for attackers during this time.
+        actions.sit()
+        currently_sitting = True
+        aggro_monitor = aggromonitor.AggroMonitor(self.screen_capture_thread)
+        aggro_monitor.start()
+        while not self.resource_monitor_thread.has_high_health and not self.resource_monitor_thread.has_high_mana:
+          if len(aggro_monitor.current_attackers) > 0:
+            # Break out of the inner loop here and go to into a normal attacker management mode. The attacker should be
+            # automatically selected by this point.
+            aggro_monitor.mark_as_completed()
+            break
+          time.sleep(3)
 
   def should_stop(self):
     self.stop_event.set()
