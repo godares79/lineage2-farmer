@@ -8,8 +8,8 @@ from threading import Thread
 import inpututil
 
 
-def spoil(screen_monitor_thread, stop_event):
-  spoil_thread = SpoilThread(screen_monitor_thread, stop_event)
+def spoil(screen_monitor_thread, stop_event, monitor_if_attacked=False, attack_event=None):
+  spoil_thread = SpoilThread(screen_monitor_thread, stop_event, monitor_if_attacked, attack_event)
   spoil_thread.daemon = True
   spoil_thread.start()
 
@@ -22,10 +22,12 @@ def sweep():
 
 class SpoilThread(Thread):
 
-  def __init__(self, screen_monitor_thread, stop_event):
+  def __init__(self, screen_monitor_thread, stop_event, monitor_if_attacked, attack_event):
     Thread.__init__(self)
     self.screen_monitor_thread = screen_monitor_thread
     self.stop_event = stop_event
+    self.monitor_if_attacked = monitor_if_attacked
+    self.attack_event = attack_event
 
   def run(self):
     # TODO: With L2OFF (hellscape) need to check for a target out of range alert and re-do spoil if it happens.
@@ -37,6 +39,11 @@ class SpoilThread(Thread):
 
       # Wait for the spoil to apply. It may take some time to reach the target and start spoiling.
       while not self.screen_monitor_thread.get_screen_object().is_spoil_applied():
+        if self.monitor_if_attacked:
+          if self.screen_monitor_thread.get_screen_object().get_target_health < 100:
+            # That target has been attacked. Return if that is the case.
+            self.attack_event.set()
+            return
         time.sleep(0.3)
 
       spoil_status = self.screen_monitor_thread.get_screen_object().get_spoil_status()

@@ -6,7 +6,7 @@ import inpututil
 import soundutil
 
 
-def plant_seed(screen_capture_thread, stop_event):
+def plant_seed(screen_capture_thread, stop_event, monitor_if_attacked=False, attack_event=None):
   # Plant a seed. Seeding should always be successful. Do not return until seeding starts.
   # Play a sound alert if seeding doesn't start for some time.
   inpututil.press_and_release_key(inpututil.SEED)
@@ -15,6 +15,12 @@ def plant_seed(screen_capture_thread, stop_event):
   while True:
     if stop_event.is_set():
       return
+
+    if monitor_if_attacked:
+      if screen_capture_thread.get_screen_object().get_target_health < 100:
+        # The target has been attacked by someone else. Stop running to the target if so.
+        attack_event.set()
+        return
 
     if itercount > 50 and itercount % 5 == 0:
       soundutil.warn()

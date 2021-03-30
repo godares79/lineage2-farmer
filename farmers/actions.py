@@ -1,5 +1,6 @@
 # Common functions that are used across multiple farming algorithms.
 import random
+import threading
 import time
 
 import inpututil
@@ -33,26 +34,33 @@ def perform_starting_actions(screen_monitor_thread,
                              stop_event,
                              should_stand=False,
                              should_seed=False,
-                             should_spoil=False):
+                             should_spoil=False,
+                             monitor_if_attacked=False,
+                             target_under_attack_event=None):
   if stop_event.is_set(): return
   if should_stand:
     stand()
 
   if stop_event.is_set(): return
   if should_seed:
-    seed(screen_monitor_thread, stop_event)
+    seed(screen_monitor_thread, stop_event, monitor_if_attacked=monitor_if_attacked,
+         target_under_attack_event=target_under_attack_event)
 
+  if target_under_attack_event.is_set(): return
   if stop_event.is_set(): return
   if should_spoil:
-    spoil(screen_monitor_thread, stop_event)
+    spoil(screen_monitor_thread, stop_event, monitor_if_attacked=monitor_if_attacked,
+          target_under_attack_event=target_under_attack_event)
 
 
-def seed(screen_monitor_thread, stop_event):
-  manoraction.plant_seed(screen_monitor_thread, stop_event)
+def seed(screen_monitor_thread, stop_event, monitor_if_attacked, target_under_attack_event):
+  manoraction.plant_seed(screen_monitor_thread, stop_event,
+                         monitor_if_attacked=monitor_if_attacked, attack_event=target_under_attack_event)
 
 
-def spoil(screen_monitor_thread, stop_event):
-  spoilaction.spoil(screen_monitor_thread, stop_event)
+def spoil(screen_monitor_thread, stop_event, monitor_if_attacked, target_under_attack_event):
+  spoilaction.spoil(screen_monitor_thread, stop_event,
+                    monitor_if_attacked=monitor_if_attacked, attack_event=target_under_attack_event)
 
 
 def attack_mob(screen_monitor_thread, stop_event, soulshot_setting):

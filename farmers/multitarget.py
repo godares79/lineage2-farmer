@@ -76,20 +76,23 @@ class SimpleMultiTargetFarm(Thread):
 
         valid_target_selected = True
 
-      if currently_sitting:
-        actions.stand()
-        currently_sitting = False
-
-      # At this point a valid target is selected and we can go through the motions.
-      # TODO: If while running to the target it starts to lose health then it is being attacked, notify if so.
-      # TODO: Add attacker monitoring at this point.
+      # At this point a valid target is selected and we can go through the motions. Keep track of all mobs
+      # attacking us.
       aggro_monitor = aggromonitor.AggroMonitor(self.screen_capture_thread)
       aggro_monitor.start()
 
       if self.stop_event.is_set(): return
+      target_under_attack_event = threading.Event()
       actions.perform_starting_actions(
         self.screen_capture_thread, self.stop_event,
-        should_stand=False, should_seed=self.args.manor, should_spoil=self.args.spoil)
+        should_stand=currently_sitting, should_seed=self.args.manor, should_spoil=self.args.spoil,
+        monitor_if_attacked=True, target_under_attack_event=target_under_attack_event)
+
+      currently_sitting = False
+      if target_under_attack_event.is_set():
+        # Deselect the current target and continue the loop to select another target.
+        inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
+        continue
 
       if self.stop_event.is_set(): return
       current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
