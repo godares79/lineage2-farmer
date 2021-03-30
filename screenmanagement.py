@@ -313,6 +313,22 @@ class ScreenObject:
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
     return target.lower() in pytesseract.image_to_string(current_target_box).strip().lower()
 
+  def get_current_target_name(self):
+    # Return the full name of the current target.
+    current_target_box = self.pillow_image.crop((1248, 1011, 1582, 1028))
+
+    for i in range(current_target_box.size[0]):
+      for j in range(current_target_box.size[1]):
+        pixel = current_target_box.getpixel((i, j))
+        if pixel[0] + pixel[1] + pixel[2] > 500:
+          current_target_box.putpixel((i, j), (255, 255, 255))
+        else:
+          current_target_box.putpixel((i, j), (0, 0, 0))
+    current_target_box = current_target_box.resize((current_target_box.size[0] * 2, current_target_box.size[1] * 2))
+
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+    return pytesseract.image_to_string(current_target_box).strip().lower()
+
   def has_target_spawned(self, target):
     if self._processed_target_text:
       return self._processed_target_text

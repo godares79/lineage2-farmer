@@ -83,6 +83,8 @@ class SimpleMultiTargetFarm(Thread):
       # At this point a valid target is selected and we can go through the motions.
       # TODO: If while running to the target it starts to lose health then it is being attacked, notify if so.
       # TODO: Add attacker monitoring at this point.
+      aggro_monitor = aggromonitor.AggroMonitor(self.screen_capture_thread)
+      aggro_monitor.start()
 
       if self.stop_event.is_set(): return
       actions.perform_starting_actions(
@@ -90,7 +92,11 @@ class SimpleMultiTargetFarm(Thread):
         should_stand=False, should_seed=self.args.manor, should_spoil=self.args.spoil)
 
       if self.stop_event.is_set(): return
+      current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
       actions.attack_mob(self.screen_capture_thread, self.stop_event, soulshot_setting=self.args.soulshot)
+
+      # Remove the now dead target from the list of current attackers in the aggro_monitor.
+      aggro_monitor.remove_attacker(current_target_name)
 
       if self.stop_event.is_set(): return
       # TODO: Handle case where we are being attacked by another mob.
@@ -99,6 +105,8 @@ class SimpleMultiTargetFarm(Thread):
       actions.perform_closing_actions(
         self.screen_capture_thread, self.stop_event,
         should_harvest=self.args.manor, should_sweep=self.args.spoil, should_loot=True, should_sit=False)
+
+      aggro_monitor.mark_as_completed()
 
       if self.resource_monitor_thread.has_low_health or self.resource_monitor_thread.has_low_mana:
         # Sit down and rest until both mana and health are considered high. Monitor for attackers during this time.
