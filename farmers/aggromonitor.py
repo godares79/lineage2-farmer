@@ -51,3 +51,6 @@ class AggroMonitor(Thread):
 
   def mark_as_completed(self):
     self.complete_event.set()
+
+  def is_completed(self):
+    return self.complete_event.is_set()

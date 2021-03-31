@@ -49,8 +49,14 @@ def perform_starting_actions(screen_monitor_thread,
   if target_under_attack_event.is_set(): return
   if stop_event.is_set(): return
   if should_spoil:
-    spoil(screen_monitor_thread, stop_event, monitor_if_attacked=monitor_if_attacked,
+    # Only monitor for other players attacking if we are not seeding. If seeding then do not monitor as it could lead
+    # to false positives.
+    spoil(screen_monitor_thread, stop_event, monitor_if_attacked=monitor_if_attacked and not should_seed,
           target_under_attack_event=target_under_attack_event)
+
+  if not should_seed and not should_spoil:
+    # If we aren't either seeding or spoiling, then explicitly press the attack key to ensure we start attacking.
+    inpututil.press_and_release_key(inpututil.ATTACK)
 
 
 def seed(screen_monitor_thread, stop_event, monitor_if_attacked, target_under_attack_event):

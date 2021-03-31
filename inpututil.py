@@ -21,6 +21,7 @@ CTRL = 0x1D
 SHIFT = 0x2A
 ALT = 0x38
 CLEAR_TARGET = 0x01      # ESCAPE
+MOVE_BACK = 0x1F         # S
 
 
 class KeyBdInput(ctypes.Structure):

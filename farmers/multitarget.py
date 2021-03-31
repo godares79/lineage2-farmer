@@ -22,6 +22,9 @@ class SimpleMultiTargetFarm(Thread):
   def run(self):
     random.seed()
     currently_sitting = False
+    aggro_monitor = None
+
+    should_seed_and_spoil = True
 
     while True:
       if self.stop_event.is_set(): return
@@ -31,11 +34,11 @@ class SimpleMultiTargetFarm(Thread):
         if self.stop_event.is_set(): return
 
         # If a target has already been selected then assume it is valid.
-        if self.screen_capture_thread.get_screen_object().has_selected_target(self.args.target):
+        if self.screen_capture_thread.get_screen_object().get_current_target_name():
           valid_target_selected = True
           continue
 
-        # TODO: Implement the target selection logic. It needs to handle some edge cases:
+        # Implement the target selection logic. It needs to handle some edge cases:
         # 1. Case where the target is selected, but cannot be seen (notification is system log).
         # 2. Case where the target is selected, but already dead.
         # 3. Case where the target is selected, but already under attack from another player.
@@ -77,21 +80,26 @@ class SimpleMultiTargetFarm(Thread):
         valid_target_selected = True
 
       # At this point a valid target is selected and we can go through the motions. Keep track of all mobs
-      # attacking us.
-      aggro_monitor = aggromonitor.AggroMonitor(self.screen_capture_thread)
-      aggro_monitor.start()
+      # attacking us. Only start the aggro monitor if it is not already started.
+      if not aggro_monitor and not aggro_monitor.is_completed():
+        aggro_monitor = aggromonitor.AggroMonitor(self.screen_capture_thread)
+        aggro_monitor.start()
 
       if self.stop_event.is_set(): return
       target_under_attack_event = threading.Event()
       actions.perform_starting_actions(
         self.screen_capture_thread, self.stop_event,
-        should_stand=currently_sitting, should_seed=self.args.manor, should_spoil=self.args.spoil,
-        monitor_if_attacked=True, target_under_attack_event=target_under_attack_event)
+        should_stand=currently_sitting,
+        should_seed=self.args.manor and should_seed_and_spoil,
+        should_spoil=self.args.spoil and should_seed_and_spoil,
+        monitor_if_attacked=True,
+        target_under_attack_event=target_under_attack_event)
 
       currently_sitting = False
       if target_under_attack_event.is_set():
-        # Deselect the current target and continue the loop to select another target.
+        # Deselect the current target, stop running, and continue the loop to select another target.
         inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
+        inpututil.press_and_release_key(inpututil.MOVE_BACK)
         continue
 
       if self.stop_event.is_set(): return
@@ -102,13 +110,30 @@ class SimpleMultiTargetFarm(Thread):
       aggro_monitor.remove_attacker(current_target_name)
 
       if self.stop_event.is_set(): return
-      # TODO: Handle case where we are being attacked by another mob.
-      # TODO: Only loot if not currently under attack by another mob. If under attack, harvest and sweep only.
-      # TODO: Once attackers have all been finished, loot everything and stop the current attackers thread.
       actions.perform_closing_actions(
         self.screen_capture_thread, self.stop_event,
-        should_harvest=self.args.manor, should_sweep=self.args.spoil, should_loot=True, should_sit=False)
+        should_harvest=self.args.manor and should_seed_and_spoil,
+        should_sweep=self.args.spoil and should_seed_and_spoil,
+        should_loot=True,
+        should_sit=False)
 
+      # Select a target in melee range if it exists.
+      # If we are being attacked by a ranged target, the sleep after the next target command will give time for the
+      # game to manually select the target.
+      inpututil.press_and_release_key(inpututil.NEXT_TARGET)
+      time.sleep(random.uniform(0.5, 0.8))
+      current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
+      if current_target_name:
+        # Go through the loop again. Only seed and spoil if it's the target we want to be doing so on.
+        if self.args.target in current_target_name:
+          should_seed_and_spoil = True
+        else:
+          should_seed_and_spoil = False
+        continue
+
+      # Perform a final loot only after all attackers are dead.
+      actions.loot(block=True)
+      should_seed_and_spoil = True
       aggro_monitor.mark_as_completed()
 
       if self.resource_monitor_thread.has_low_health or self.resource_monitor_thread.has_low_mana:
@@ -121,7 +146,6 @@ class SimpleMultiTargetFarm(Thread):
           if len(aggro_monitor.current_attackers) > 0:
             # Break out of the inner loop here and go to into a normal attacker management mode. The attacker should be
             # automatically selected by this point.
-            aggro_monitor.mark_as_completed()
             break
           time.sleep(3)
 
