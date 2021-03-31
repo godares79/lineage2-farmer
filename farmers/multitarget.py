@@ -125,7 +125,7 @@ class SimpleMultiTargetFarm(Thread):
       current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
       if current_target_name:
         # Go through the loop again. Only seed and spoil if it's the target we want to be doing so on.
-        if self.args.target in current_target_name:
+        if self.args.target.lower() in current_target_name:
           should_seed_and_spoil = True
         else:
           should_seed_and_spoil = False
