@@ -40,7 +40,7 @@ class SpoilThread(Thread):
       # Wait for the spoil to apply. It may take some time to reach the target and start spoiling.
       while not self.screen_monitor_thread.get_screen_object().is_spoil_applied():
         if self.monitor_if_attacked:
-          if self.screen_monitor_thread.get_screen_object().get_target_health < 100:
+          if self.screen_monitor_thread.get_screen_object().get_target_health() < 100:
             # That target has been attacked. Return if that is the case.
             self.attack_event.set()
             return

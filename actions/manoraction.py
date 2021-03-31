@@ -17,7 +17,7 @@ def plant_seed(screen_capture_thread, stop_event, monitor_if_attacked=False, att
       return
 
     if monitor_if_attacked:
-      if screen_capture_thread.get_screen_object().get_target_health < 100:
+      if screen_capture_thread.get_screen_object().get_target_health() < 100:
         # The target has been attacked by someone else. Stop running to the target if so.
         attack_event.set()
         return
