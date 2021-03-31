@@ -124,16 +124,19 @@ class SimpleMultiTargetFarm(Thread):
         should_loot=True,
         should_sit=False)
 
-      # Select a target in melee range if it exists.
-      # If we are being attacked by a ranged target, the sleep after the next target command will give time for the
-      # game to manually select the target.
-      inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
-      inpututil.press_and_release_key(inpututil.NEXT_TARGET)
-      time.sleep(random.uniform(0.5, 0.8))
-      current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
-      if current_target_name:
-        # Go through the loop again to handle the other aggroing mobs.
-        continue
+      # If there is another target attacking us, wait a second for the game to autoselect then attack and
+      # continue the loop. Because the aggro_monitor list track unique names it is possible that a target with
+      # the same name is attacking us, in that case just continuing the loop as normal will be enough.
+      if len(aggro_monitor.current_attackers) > 0:
+        time.sleep(random.uniform(0.7, 1.0))
+        inpututil.press_and_release_key(inpututil.ATTACK)
+        current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
+        if current_target_name:
+          # Go through the loop again to handle the other aggroing mobs.
+          continue
+        else:
+          print('For some reason the aggro_monitor list is > 0 length however no target is selected.')
+          soundutil.warn()
 
       # Perform a final loot only after all attackers are dead.
       actions.loot(block=True)

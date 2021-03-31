@@ -76,17 +76,17 @@ def attack_mob(screen_monitor_thread, stop_event, soulshot_setting):
   while mob_health_percent > 0:
     if stop_event.is_set(): return
     mob_health_percent = screen_monitor_thread.get_screen_object().get_target_health()
+    if not mob_health_percent or mob_health_percent == 0:
+      # Break out of the loop if for some reason the mob health percent is None.
+      break
 
     if soulshot_setting == SoulshotSetting.ONCE:
       if mob_health_percent < 70 and not used_soulshot:
         used_soulshot = True
         inpututil.press_and_release_key(inpututil.SOULSHOT)
 
-    if mob_health_percent == 0:
-      break
-    else:
-      # Check every 1 second for mob health.
-      time.sleep(1)
+    # Check every 1 second for mob health.
+    time.sleep(1)
 
   # Just give it about 0.5 second for things to clear out a bit.
   time.sleep(random.uniform(0.6, 0.9))
