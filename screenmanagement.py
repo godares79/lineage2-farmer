@@ -326,6 +326,9 @@ class ScreenObject:
           current_target_box.putpixel((i, j), (0, 0, 0))
     current_target_box = current_target_box.resize((current_target_box.size[0] * 2, current_target_box.size[1] * 2))
 
+    # TODO: I should have an early return in here that will return if there are no pixels matching the mask, as
+    # that means no target is selected.
+
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
     return pytesseract.image_to_string(current_target_box).strip().lower()
 

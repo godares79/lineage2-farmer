@@ -134,9 +134,9 @@ class SimpleMultiTargetFarm(Thread):
       # If there is another target attacking us, it should be autoselected by this point.
       # Because the aggro_monitor list tracks unique names it is possible that a target with
       # the same name is attacking us, in that case just continuing the loop as normal will be enough.
-      if len(aggro_monitor.current_attackers) > 0:
+      current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
+      if len(aggro_monitor.current_attackers) > 0 or current_target_name:
         inpututil.press_and_release_key(inpututil.ATTACK)
-        current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
         if current_target_name:
           # Go through the loop again to handle the other aggroing mobs.
           continue
