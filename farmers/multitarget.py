@@ -71,6 +71,9 @@ class SimpleMultiTargetFarm(Thread):
           time.sleep(6)
           continue
 
+        # Try to move towards the target first in order to determine if it can not be seen.
+        inpututil.press_and_release_key(inpututil.ATTACK)
+        time.sleep(random.uniform(0.25, 0.3))
         if self.screen_capture_thread.get_screen_object().is_target_unseen():
           print(f'Target {self.args.target} cannot be seen!')
           valid_target_selected = False
