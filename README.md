@@ -8,3 +8,5 @@ Has dependencies on:
 - Tesseract 5 (Tesseract 4 is much less accurate than 5!)
 - OpenCV
 - Pillow
+
+Eventually would like to extend this to SWG and other new games. Good potential for farming and selling.
