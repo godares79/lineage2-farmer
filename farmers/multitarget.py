@@ -24,18 +24,22 @@ class SimpleMultiTargetFarm(Thread):
     currently_sitting = False
     aggro_monitor = None
 
-    should_seed_and_spoil = True
-
     while True:
       if self.stop_event.is_set(): return
 
       valid_target_selected = False
+      should_seed_and_spoil = True
       while not valid_target_selected:
         if self.stop_event.is_set(): return
 
         # If a target has already been selected then assume it is valid.
-        if self.screen_capture_thread.get_screen_object().get_current_target_name():
+        current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
+        if current_target_name:
           valid_target_selected = True
+          if self.args.target in current_target_name:
+            should_seed_and_spoil = True
+          else:
+            should_seed_and_spoil = False
           continue
 
         # Implement the target selection logic. It needs to handle some edge cases:
@@ -120,20 +124,16 @@ class SimpleMultiTargetFarm(Thread):
       # Select a target in melee range if it exists.
       # If we are being attacked by a ranged target, the sleep after the next target command will give time for the
       # game to manually select the target.
+      inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
       inpututil.press_and_release_key(inpututil.NEXT_TARGET)
       time.sleep(random.uniform(0.5, 0.8))
       current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
       if current_target_name:
-        # Go through the loop again. Only seed and spoil if it's the target we want to be doing so on.
-        if self.args.target.lower() in current_target_name:
-          should_seed_and_spoil = True
-        else:
-          should_seed_and_spoil = False
+        # Go through the loop again to handle the other aggroing mobs.
         continue
 
       # Perform a final loot only after all attackers are dead.
       actions.loot(block=True)
-      should_seed_and_spoil = True
       aggro_monitor.mark_as_completed()
 
       if self.resource_monitor_thread.has_low_health or self.resource_monitor_thread.has_low_mana:
