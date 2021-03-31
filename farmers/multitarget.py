@@ -124,11 +124,17 @@ class SimpleMultiTargetFarm(Thread):
         should_loot=True,
         should_sit=False)
 
-      # If there is another target attacking us, wait a second for the game to autoselect then attack and
-      # continue the loop. Because the aggro_monitor list track unique names it is possible that a target with
+      # At this point, sweep may have failed and we will still have the dead mob selected. If that is the case
+      # manually unselect that mob and wait a second so that any aggroing mob will be autoselected.
+      if (self.screen_capture_thread.get_screen_object().get_current_target_name()
+          and self.screen_capture_thread.get_screen_object().get_target_health() <= 0):
+        inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
+        time.sleep(1.5)
+
+      # If there is another target attacking us, it should be autoselected by this point.
+      # Because the aggro_monitor list tracks unique names it is possible that a target with
       # the same name is attacking us, in that case just continuing the loop as normal will be enough.
       if len(aggro_monitor.current_attackers) > 0:
-        time.sleep(random.uniform(0.7, 1.0))
         inpututil.press_and_release_key(inpututil.ATTACK)
         current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
         if current_target_name:
