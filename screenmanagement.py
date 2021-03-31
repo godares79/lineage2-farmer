@@ -205,7 +205,7 @@ class ScreenObject:
     # Create opencv image for the health bar area.
     # Interestingly, if I only try to crop a single row of pixels I get an exception.
     # Just crop two rows of pixels instead.
-    mana_img = cv2.cvtColor(np.asarray(self.pillow_image.crop((868, 1051, 1120, 1052))), cv2.COLOR_RGB2BGR)
+    mana_img = cv2.cvtColor(np.asarray(self.pillow_image.crop((868, 1051, 1219, 1052))), cv2.COLOR_RGB2BGR)
 
     # Total length. Like in health calculation, used due low mana alert changing the bar color.
     total_length = len(mana_img[0])
