@@ -85,7 +85,7 @@ class SimpleMultiTargetFarm(Thread):
 
       # At this point a valid target is selected and we can go through the motions. Keep track of all mobs
       # attacking us. Only start the aggro monitor if it is not already started.
-      if not aggro_monitor and not aggro_monitor.is_completed():
+      if not aggro_monitor or aggro_monitor.is_completed():
         aggro_monitor = aggromonitor.AggroMonitor(self.screen_capture_thread)
         aggro_monitor.start()
 
