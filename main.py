@@ -47,7 +47,7 @@ import keyboard
 
 import antibotprotection
 from settings.farmingalgorithm import FarmingAlgorithm
-from farmers import hybridsingletarget, multitarget
+from farmers import hybridsingletarget, multitarget, aggromonitor
 import resourcemonitor
 import screenmanagement
 from settings.lineageapplication import LineageApplication
@@ -141,8 +141,6 @@ def main():
     print(f'In testing mode. File: {args.testing_file}')
     screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
     time.sleep(3)
-    current_mana_percent = screen_monitor.get_screen_object().get_mana_percent()
-    print(f'Current Mana Percent: {current_mana_percent}')
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')
