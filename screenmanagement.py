@@ -523,10 +523,20 @@ class ScreenObject:
     # - Crop box: (21, 900) -> (343, 1031)
     # - RGB Color: (215, 121, 49)
     primary_textbox_cropped_img = self.pillow_image.crop((21, 900, 343, 1031))
+
+    # Crop the image down to just the red experience portions.
     cv_img = cv2.cvtColor(np.asarray(primary_textbox_cropped_img), cv2.COLOR_RGB2BGR)
-    mask = cv2.inRange(cv_img, (49, 121, 215), (49, 121, 215))
-    cv_img[mask == 0] = (0, 0, 0)
-    cv_img[mask != 0] = (255, 255, 255)
+    experience_received_mask = cv2.inRange(cv_img, (0, 0, 250), (5, 5, 255))
+    experience_received_coords = cv2.findNonZero(experience_received_mask)
+    if experience_received_coords is not None and len(experience_received_coords) > 0:
+      extreme_coord = experience_received_coords[np.argmax(experience_received_coords[:, :, 1])]
+      # Can use Numpy slicing to crop the image. The array format: (Y, X, Color).
+      cv_img = cv_img[extreme_coord[0][1]+1:, :, :]
+
+    # Extract only the current damage lines.
+    damage_mask = cv2.inRange(cv_img, (49, 121, 215), (49, 121, 215))
+    cv_img[damage_mask == 0] = (0, 0, 0)
+    cv_img[damage_mask != 0] = (255, 255, 255)
 
     primary_textbox_processed = Image.fromarray(cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB))
     system_crop_img = primary_textbox_processed.resize(

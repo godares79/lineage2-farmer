@@ -156,11 +156,17 @@ class SimpleMultiTargetFarm(Thread):
         currently_sitting = True
         aggro_monitor = aggromonitor.AggroMonitor(self.screen_capture_thread)
         aggro_monitor.start()
+        # TODO: There is some kind of bug here. We are breaking out of the wait loop too early even when there
+        # are no current attackers.
+        print(f'has_high_health: {self.resource_monitor_thread.has_high_health}')
+        print(f'has_low_health: {self.resource_monitor_thread.has_low_health}')
+        print(f'has_high_mana: {self.resource_monitor_thread.has_high_mana}')
+        print(f'has_low_mana: {self.resource_monitor_thread.has_low_mana}')
         while not self.resource_monitor_thread.has_high_health and not self.resource_monitor_thread.has_high_mana:
+          print(f'Inside of busywait loop: has_high_health: {self.resource_monitor_thread.has_high_health}, has_high_mana: {self.resource_monitor_thread.has_high_mana}')
           if len(aggro_monitor.current_attackers) > 0:
             # Break out of the inner loop here and go to into a normal attacker management mode. The attacker should be
             # automatically selected by this point.
-            print('While sitting the aggro_monitor has detected an attacker.')
             break
           time.sleep(3)
 

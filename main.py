@@ -141,6 +141,7 @@ def main():
     print(f'In testing mode. File: {args.testing_file}')
     screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
     time.sleep(3)
+    print(f'Attackers:\n{screen_monitor.get_screen_object().get_attackers()}')
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')
