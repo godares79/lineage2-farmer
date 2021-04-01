@@ -18,7 +18,7 @@ class AggroMonitor(Thread):
   def run(self):
     # Every 1 seconds get the incoming damage portions of the primary text box.
     # - Crop box: (21, 900) -> (343, 1031)
-    # - RGB Color: (215, 121, 49)
+    # - RGB Color of attackers lines: (215, 121, 49)
     # Extract the names of the attackers: <attacker name> hit you for N damage.
     # For each attacker, use _add_new_attacker to add to the list.
     name_match_regex = re.compile(r'^(.*)hit you for.*$', re.IGNORECASE | re.MULTILINE)
