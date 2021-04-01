@@ -25,10 +25,6 @@ class AggroMonitor(Thread):
     while True:
       if self.complete_event.is_set(): return
 
-      # TODO: There is a bug here, old text in the textbox will result in dead enemies still being added to the
-      # attackers list. I should crop the lines that are going to be input to Tesseract at the most recent experience
-      # received entry in the chat log.
-      # The experience system color msg is RGB: (255, 0, 0).
       attackers = self.screen_monitor.get_screen_object().get_attackers()
       names = name_match_regex.findall(attackers)
 
