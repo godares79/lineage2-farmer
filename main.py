@@ -141,7 +141,12 @@ def main():
     print(f'In testing mode. File: {args.testing_file}')
     screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
     time.sleep(3)
-    print(f'Attackers:\n{screen_monitor.get_screen_object().get_attackers()}')
+
+    resource_monitor_thread = create_and_start_resource_monitor_thread(screen_monitor, False)
+    print(f'has_high_health: {resource_monitor_thread.has_high_health}')
+    print(f'has_low_health: {resource_monitor_thread.has_low_health}')
+    print(f'has_high_mana: {resource_monitor_thread.has_high_mana}')
+    print(f'has_low_mana: {resource_monitor_thread.has_low_mana}')
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')

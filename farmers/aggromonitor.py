@@ -31,7 +31,7 @@ class AggroMonitor(Thread):
       for name in names:
         self._add_new_attacker(name.strip())
 
-      time.sleep(1)
+      time.sleep(0.6)
 
   def remove_attacker(self, attacker_name):
     # Remove the given attacker_name from the list.

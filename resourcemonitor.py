@@ -48,4 +48,4 @@ class ResourceMonitorThread(Thread):
         if pet_health_percent < 100:
           soundutil.alert()
 
-      time.sleep(5)
+      time.sleep(3)

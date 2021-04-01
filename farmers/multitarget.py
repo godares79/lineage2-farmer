@@ -150,7 +150,12 @@ class SimpleMultiTargetFarm(Thread):
       actions.loot(block=True)
       aggro_monitor.mark_as_completed()
 
+      print(f'has_high_health: {self.resource_monitor_thread.has_high_health}')
+      print(f'has_low_health: {self.resource_monitor_thread.has_low_health}')
+      print(f'has_high_mana: {self.resource_monitor_thread.has_high_mana}')
+      print(f'has_low_mana: {self.resource_monitor_thread.has_low_mana}')
       if self.resource_monitor_thread.has_low_health or self.resource_monitor_thread.has_low_mana:
+        print(f'Inside of low health/mana check: has_low_health: {self.resource_monitor_thread.has_low_health}, has_low_mana: {self.resource_monitor_thread.has_low_mana}')
         # Sit down and rest until both mana and health are considered high. Monitor for attackers during this time.
         actions.sit()
         currently_sitting = True
@@ -158,10 +163,6 @@ class SimpleMultiTargetFarm(Thread):
         aggro_monitor.start()
         # TODO: There is some kind of bug here. We are breaking out of the wait loop too early even when there
         # are no current attackers.
-        print(f'has_high_health: {self.resource_monitor_thread.has_high_health}')
-        print(f'has_low_health: {self.resource_monitor_thread.has_low_health}')
-        print(f'has_high_mana: {self.resource_monitor_thread.has_high_mana}')
-        print(f'has_low_mana: {self.resource_monitor_thread.has_low_mana}')
         while not self.resource_monitor_thread.has_high_health and not self.resource_monitor_thread.has_high_mana:
           print(f'Inside of busywait loop: has_high_health: {self.resource_monitor_thread.has_high_health}, has_high_mana: {self.resource_monitor_thread.has_high_mana}')
           if len(aggro_monitor.current_attackers) > 0:
