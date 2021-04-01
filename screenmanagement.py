@@ -184,7 +184,7 @@ class ScreenObject:
       # Something went wrong. Just return None.
       return None
 
-    return int((total_length / (total_length + low_health_len)) * 100)
+    return int(((total_length - low_health_len) / total_length) * 100)
 
   def get_pet_health_percent(self):
     # Same colors as getting the target health. But just different co-ordinates.
@@ -205,7 +205,7 @@ class ScreenObject:
     # Create opencv image for the health bar area.
     # Interestingly, if I only try to crop a single row of pixels I get an exception.
     # Just crop two rows of pixels instead.
-    mana_img = cv2.cvtColor(np.asarray(self.pillow_image.crop((868, 1051, 1219, 1052))), cv2.COLOR_RGB2BGR)
+    mana_img = cv2.cvtColor(np.asarray(self.pillow_image.crop((868, 1051, 1220, 1052))), cv2.COLOR_RGB2BGR)
 
     # Total length. Like in health calculation, used due low mana alert changing the bar color.
     total_length = len(mana_img[0])
@@ -218,7 +218,7 @@ class ScreenObject:
       # Something went wrong. Just return None.
       return None
 
-    return int((total_length / (total_length + low_mana_len)) * 100)
+    return int(((total_length - low_mana_len) / total_length) * 100)
 
   def get_pet_mana_percent(self):
     pass
