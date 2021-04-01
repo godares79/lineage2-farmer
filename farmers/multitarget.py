@@ -36,7 +36,7 @@ class SimpleMultiTargetFarm(Thread):
         current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
         if current_target_name:
           valid_target_selected = True
-          if self.args.target in current_target_name:
+          if self.args.target.lower() in current_target_name:
             should_seed_and_spoil = True
           else:
             should_seed_and_spoil = False
@@ -126,8 +126,9 @@ class SimpleMultiTargetFarm(Thread):
 
       # At this point, sweep may have failed and we will still have the dead mob selected. If that is the case
       # manually unselect that mob and wait a second so that any aggroing mob will be autoselected.
-      if (self.screen_capture_thread.get_screen_object().get_current_target_name()
-          and self.screen_capture_thread.get_screen_object().get_target_health() <= 0):
+      target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
+      target_health = self.screen_capture_thread.get_screen_object().get_target_health()
+      if target_name and target_health is not None and target_health <= 0:
         inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
         time.sleep(1.5)
 
@@ -142,6 +143,7 @@ class SimpleMultiTargetFarm(Thread):
           continue
         else:
           print('For some reason the aggro_monitor list is > 0 length however no target is selected.')
+          print(f'aggro_monitor entries: {aggro_monitor.current_attackers}')
           soundutil.warn()
 
       # Perform a final loot only after all attackers are dead.
@@ -158,6 +160,7 @@ class SimpleMultiTargetFarm(Thread):
           if len(aggro_monitor.current_attackers) > 0:
             # Break out of the inner loop here and go to into a normal attacker management mode. The attacker should be
             # automatically selected by this point.
+            print('While sitting the aggro_monitor has detected an attacker.')
             break
           time.sleep(3)
 
