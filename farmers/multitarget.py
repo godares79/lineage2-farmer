@@ -149,11 +149,12 @@ class SimpleMultiTargetFarm(Thread):
       # Perform a final loot only after all attackers are dead.
       # TODO: The loot macro isn't working too well. I should just making looting into a button spam on another
       # thread that only blocks for 2 seconds-ish.
-      actions.loot(block=False)
+      for i in range(1, random.randrange(7, 10, 1)):
+        actions.loot(block=False)
+        time.sleep(0.25)
       aggro_monitor.mark_as_completed()
 
       if self.resource_monitor_thread.has_low_health or self.resource_monitor_thread.has_low_mana:
-        print(f'Inside of low health/mana check: has_low_health: {self.resource_monitor_thread.has_low_health}, has_low_mana: {self.resource_monitor_thread.has_low_mana}')
         # Sit down and rest until both mana and health are considered high. Monitor for attackers during this time.
         actions.sit()
         currently_sitting = True
@@ -161,7 +162,7 @@ class SimpleMultiTargetFarm(Thread):
         aggro_monitor.start()
         # TODO: There is some kind of bug here. We are breaking out of the wait loop too early even when there
         # are no current attackers.
-        while not self.resource_monitor_thread.has_high_health and not self.resource_monitor_thread.has_high_mana:
+        while not self.resource_monitor_thread.has_high_health or not self.resource_monitor_thread.has_high_mana:
           print(f'Inside of busywait loop: has_high_health: {self.resource_monitor_thread.has_high_health}, has_high_mana: {self.resource_monitor_thread.has_high_mana}')
           print(f'Contents of aggro_monitor.current_attackers: {aggro_monitor.current_attackers}')
           if len(aggro_monitor.current_attackers) > 0:
