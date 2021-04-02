@@ -147,13 +147,11 @@ class SimpleMultiTargetFarm(Thread):
           soundutil.warn()
 
       # Perform a final loot only after all attackers are dead.
-      actions.loot(block=True)
+      # TODO: The loot macro isn't working too well. I should just making looting into a button spam on another
+      # thread that only blocks for 2 seconds-ish.
+      actions.loot(block=False)
       aggro_monitor.mark_as_completed()
 
-      print(f'has_high_health: {self.resource_monitor_thread.has_high_health}')
-      print(f'has_low_health: {self.resource_monitor_thread.has_low_health}')
-      print(f'has_high_mana: {self.resource_monitor_thread.has_high_mana}')
-      print(f'has_low_mana: {self.resource_monitor_thread.has_low_mana}')
       if self.resource_monitor_thread.has_low_health or self.resource_monitor_thread.has_low_mana:
         print(f'Inside of low health/mana check: has_low_health: {self.resource_monitor_thread.has_low_health}, has_low_mana: {self.resource_monitor_thread.has_low_mana}')
         # Sit down and rest until both mana and health are considered high. Monitor for attackers during this time.
@@ -165,6 +163,7 @@ class SimpleMultiTargetFarm(Thread):
         # are no current attackers.
         while not self.resource_monitor_thread.has_high_health and not self.resource_monitor_thread.has_high_mana:
           print(f'Inside of busywait loop: has_high_health: {self.resource_monitor_thread.has_high_health}, has_high_mana: {self.resource_monitor_thread.has_high_mana}')
+          print(f'Contents of aggro_monitor.current_attackers: {aggro_monitor.current_attackers}')
           if len(aggro_monitor.current_attackers) > 0:
             # Break out of the inner loop here and go to into a normal attacker management mode. The attacker should be
             # automatically selected by this point.
