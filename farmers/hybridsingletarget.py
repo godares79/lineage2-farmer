@@ -60,7 +60,7 @@ class HybridSingleTargetFarm(Thread):
       if self.stop_event.is_set(): return
       actions.perform_starting_actions(
         self.screen_capture_thread, self.stop_event,
-        should_stand=self.args.sit, should_seed=self.args.manor, should_spoil=self.args.spoil)
+        should_stand=self.args.sit, should_seed=self.args.manor, should_spoil=self.args.spoil, target_under_attack_event=threading.Event())
 
       if self.stop_event.is_set(): return
       actions.attack_mob(self.screen_capture_thread, self.stop_event, soulshot_setting=self.args.soulshot)
@@ -69,6 +69,12 @@ class HybridSingleTargetFarm(Thread):
       actions.perform_closing_actions(
         self.screen_capture_thread, self.stop_event,
         should_harvest=self.args.manor, should_sweep=self.args.spoil, should_loot=True, should_sit=self.args.sit)
+
+      # TODO: The loot macro isn't working too well. I should just making looting into a button spam on another
+      # thread that only blocks for 2 seconds-ish.
+      for i in range(1, random.randrange(6, 8, 1)):
+        actions.loot(block=False)
+        time.sleep(0.25)
 
   def should_stop(self):
     self.stop_event.set()
