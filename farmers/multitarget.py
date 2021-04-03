@@ -5,7 +5,7 @@ from threading import Thread
 
 import inpututil
 import soundutil
-from farmers import actions, aggromonitor
+from farmers import hotkeyactions, aggromonitor
 
 
 class SimpleMultiTargetFarm(Thread):
@@ -54,7 +54,7 @@ class SimpleMultiTargetFarm(Thread):
           print(f'Could not select {self.args.target}!')
           valid_target_selected = False
           soundutil.notify()
-          actions.sit()
+          hotkeyactions.sit()
           currently_sitting = True
           inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
           time.sleep(6)
@@ -65,7 +65,7 @@ class SimpleMultiTargetFarm(Thread):
           print(f'Target {self.args.target} health is less than 100%!')
           valid_target_selected = False
           soundutil.notify()
-          actions.sit()
+          hotkeyactions.sit()
           currently_sitting = True
           inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
           time.sleep(6)
@@ -78,7 +78,7 @@ class SimpleMultiTargetFarm(Thread):
           print(f'Target {self.args.target} cannot be seen!')
           valid_target_selected = False
           soundutil.notify()
-          actions.sit()
+          hotkeyactions.sit()
           currently_sitting = True
           inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
           time.sleep(6)
@@ -94,7 +94,7 @@ class SimpleMultiTargetFarm(Thread):
 
       if self.stop_event.is_set(): return
       target_under_attack_event = threading.Event()
-      actions.perform_starting_actions(
+      hotkeyactions.perform_starting_actions(
         self.screen_capture_thread, self.stop_event,
         should_stand=currently_sitting,
         should_seed=self.args.manor and should_seed_and_spoil,
@@ -111,13 +111,13 @@ class SimpleMultiTargetFarm(Thread):
 
       if self.stop_event.is_set(): return
       current_target_name = self.screen_capture_thread.get_screen_object().get_current_target_name()
-      actions.attack_mob(self.screen_capture_thread, self.stop_event, soulshot_setting=self.args.soulshot)
+      hotkeyactions.attack_mob(self.screen_capture_thread, self.stop_event, soulshot_setting=self.args.soulshot)
 
       # Remove the now dead target from the list of current attackers in the aggro_monitor.
       aggro_monitor.remove_attacker(current_target_name)
 
       if self.stop_event.is_set(): return
-      actions.perform_closing_actions(
+      hotkeyactions.perform_closing_actions(
         self.screen_capture_thread, self.stop_event,
         should_harvest=self.args.manor and should_seed_and_spoil,
         should_sweep=self.args.spoil and should_seed_and_spoil,
@@ -150,13 +150,13 @@ class SimpleMultiTargetFarm(Thread):
       # TODO: The loot macro isn't working too well. I should just making looting into a button spam on another
       # thread that only blocks for 2 seconds-ish.
       for i in range(1, random.randrange(7, 10, 1)):
-        actions.loot(block=False)
+        hotkeyactions.loot(block=False)
         time.sleep(0.25)
       aggro_monitor.mark_as_completed()
 
       if self.resource_monitor_thread.has_low_health or self.resource_monitor_thread.has_low_mana:
         # Sit down and rest until both mana and health are considered high. Monitor for attackers during this time.
-        actions.sit()
+        hotkeyactions.sit()
         currently_sitting = True
         aggro_monitor = aggromonitor.AggroMonitor(self.screen_capture_thread)
         aggro_monitor.start()

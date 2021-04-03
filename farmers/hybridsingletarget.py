@@ -8,7 +8,7 @@ from threading import Thread
 
 import inpututil
 import soundutil
-from farmers import actions
+from farmers import hotkeyactions
 
 
 class HybridSingleTargetFarm(Thread):
@@ -25,7 +25,7 @@ class HybridSingleTargetFarm(Thread):
     random.seed()
 
     while not self.stop_event.is_set():
-      target_selected = actions.wait_for_manually_selected_target(
+      target_selected = hotkeyactions.wait_for_manually_selected_target(
         self.screen_capture_thread, self.stop_event, self.args.target)
 
       if not target_selected:
@@ -60,22 +60,22 @@ class HybridSingleTargetFarm(Thread):
             time.sleep(5)
 
       if self.stop_event.is_set(): return
-      actions.perform_starting_actions(
+      hotkeyactions.perform_starting_actions(
         self.screen_capture_thread, self.stop_event,
         should_stand=self.args.sit, should_seed=self.args.manor, should_spoil=self.args.spoil, target_under_attack_event=threading.Event())
 
       if self.stop_event.is_set(): return
-      actions.attack_mob(self.screen_capture_thread, self.stop_event, soulshot_setting=self.args.soulshot)
+      hotkeyactions.attack_mob(self.screen_capture_thread, self.stop_event, soulshot_setting=self.args.soulshot)
 
       if self.stop_event.is_set(): return
-      actions.perform_closing_actions(
+      hotkeyactions.perform_closing_actions(
         self.screen_capture_thread, self.stop_event,
         should_harvest=self.args.manor, should_sweep=self.args.spoil, should_loot=True, should_sit=self.args.sit)
 
       # TODO: The loot macro isn't working too well. I should just making looting into a button spam on another
       # thread that only blocks for 2 seconds-ish.
       for i in range(1, random.randrange(6, 8, 1)):
-        actions.loot(block=False)
+        hotkeyactions.loot(block=False)
         time.sleep(0.25)
 
   def should_stop(self):
