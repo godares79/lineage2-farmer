@@ -12,6 +12,8 @@ from farmers import actions
 
 
 class HybridSingleTargetFarm(Thread):
+  # This only really works well on L2J. On PTS servers the spawn locations are too randomized for /targetnext to
+  # work. Instead, multitarget farming algorithm should almost always be used.
 
   def __init__(self, args, screen_capture_thread):
     Thread.__init__(self)
