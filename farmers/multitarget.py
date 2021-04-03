@@ -147,8 +147,9 @@ class SimpleMultiTargetFarm(Thread):
           soundutil.warn()
 
       # Perform a final loot only after all attackers are dead.
-      # TODO: The loot macro isn't working too well. I should just making looting into a button spam on another
-      # thread that only blocks for 2 seconds-ish.
+      # TODO: The loot macro isn't working too well. I should just hold down the loot hotkey for 2 or 3 seconds I think.
+      # The loot hotkey does not interrupt actions if there is nothing to loot, so I can continue targetting and moving
+      # to the next target which is great.
       for i in range(1, random.randrange(7, 10, 1)):
         hotkeyactions.loot(block=False)
         time.sleep(0.25)
