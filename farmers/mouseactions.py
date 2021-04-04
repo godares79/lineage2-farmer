@@ -5,17 +5,24 @@ from math import sqrt
 
 import numpy as np
 import pyautogui as pyautogui
+import pyclick as pyclick
 from scipy import interpolate
 
 
 def select_target_with_mouse(screen_monitor, intended_target_enum):
   # Returns True if a valid target is selected. False if not.
   # TODO: This only works for fullscreen currently. Need to get windowed mode working eventually.
+  # TODO: Take a screenshot on demand. The 0.2s delay in the screen monitor is too high if the target is moving.
+  # TODO: Figure out how to move the mouse more quickly. The delay is too long, I can move the mouse 2x faster at least.
   for next_location in next(_cycle_to_next_valid_target(screen_monitor, intended_target_enum)):
     # Move the mouse cursor and click on the next target. If it is valid (present, not being attacked, etc.) then return
     # True.
-    _move_along_bezier_curve(next_location)
-    pyautogui.click()
+    randomized_next_location = (next_location[0] + random.randint(-10, 10), next_location[1] + random.randint(-10, 10))
+    humanclicker = pyclick.HumanClicker()
+    humanclicker.move(randomized_next_location, 0.25)
+    pyautogui.mouseDown()
+    time.sleep(random.uniform(0.1, 0.15))
+    pyautogui.mouseUp()
 
     time.sleep(0.4)
 
@@ -33,7 +40,7 @@ def _move_along_bezier_curve(end_location):
   def point_dist(x1, y1, x2, y2):
     return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
-  cp = random.randint(3, 5)  # Number of control points. Must be at least 2.
+  cp = random.randint(50, 60)  # Number of control points. Must be at least 2.
   x1, y1 = pyautogui.position()  # Starting position
 
   # Distribute control points between start and destination evenly.
@@ -61,7 +68,8 @@ def _move_along_bezier_curve(end_location):
   pyautogui.MINIMUM_SLEEP = 0
   pyautogui.PAUSE = 0
 
-  duration = 0.1
+  print(f'{len(points[0])}')
+  duration = random.uniform(0.4, 0.6)
   timeout = duration / len(points[0])
   point_list = zip(*(i.astype(int) for i in points))
   for point in point_list:

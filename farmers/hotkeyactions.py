@@ -88,9 +88,6 @@ def attack_mob(screen_monitor_thread, stop_event, soulshot_setting):
     # Check every 1 second for mob health.
     time.sleep(1)
 
-  # Just give it about 0.5 second for things to clear out a bit.
-  time.sleep(random.uniform(0.6, 0.9))
-
 
 def perform_closing_actions(screen_monitor_thread,
                             stop_event,
@@ -124,10 +121,19 @@ def sweep():
 
 
 def loot(block=False):
+  iterations = random.randint(7, 9)
   if block:
-    inpututil.press_and_release_key(inpututil.LOOT_MACRO, lower_bound_time=2.0, upper_bound_time=3.5)
+    for i in range(1, iterations):
+      inpututil.press_and_release_key(inpututil.LOOT_MACRO)
+      time.sleep(random.uniform(0.25, 0.3))
   else:
-    threading.Thread(target=inpututil.press_and_release_key, args=(inpututil.LOOT_MACRO, 2.5, 3.5)).start()
+    threading.Thread(target=_loot_spam, args=(iterations, )).start()
+
+
+def _loot_spam(iterations):
+  for i in range(1, iterations):
+    inpututil.press_and_release_key(inpututil.LOOT_MACRO)
+    time.sleep(random.uniform(0.25, 0.3))
 
 
 def sit():

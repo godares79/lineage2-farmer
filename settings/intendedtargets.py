@@ -22,7 +22,7 @@ def _properties_map():
       selection_offset=(0, 10)),
     IntendedTarget.MONSTER_EYE_SEARCHER: TargetProperties(
       spawn_timeout=75, ocr_text='searcher', name_bitmap='monster_eye_searcher.bmp', full_name='Monster Eye Searcher',
-      selection_offset=(-13, 35))
+      selection_offset=(-13, 60))
   }
 
 

@@ -42,8 +42,14 @@ class SimpleMultiTargetFarm(Thread):
             should_seed_and_spoil = False
           continue
 
-        # Try to target using the mouse first before resorting to the target macro.
-        valid_target_selected = mouseactions.select_target_with_mouse(self.screen_capture_thread, self.args.target_enum)
+        # Try to target using the mouse first before resorting to the target macro. Try to do so for up to 10 seconds.
+        for i in range(1, 10):
+          valid_target_selected = mouseactions.select_target_with_mouse(self.screen_capture_thread, self.args.target_enum)
+          if valid_target_selected:
+            break
+          time.sleep(1)
+          if self.stop_event.is_set(): return
+
         if valid_target_selected:
           continue
 
@@ -120,8 +126,13 @@ class SimpleMultiTargetFarm(Thread):
         self.screen_capture_thread, self.stop_event,
         should_harvest=self.args.manor and should_seed_and_spoil,
         should_sweep=self.args.spoil and should_seed_and_spoil,
-        should_loot=False,
+        should_loot=True,
         should_sit=False)
+
+      # TODO: These next two checks for attackers takes way too long. I should take a screenshot on demand, parse
+      # that to remove the old attackers and determine if there are any new attackers quickly. I can also
+      # use the area that I am in to determine if I even need to check it (for example, there is nothing that will
+      # aggro me around the Monster Eye Searchers).
 
       # At this point, sweep may have failed and we will still have the dead mob selected. If that is the case
       # manually unselect that mob and wait a second so that any aggroing mob will be autoselected.

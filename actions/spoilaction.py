@@ -17,7 +17,7 @@ def spoil(screen_monitor_thread, stop_event, monitor_if_attacked=False, attack_e
 def sweep():
   # Use the sweeper skill. Always succeeds if there is anything to be swept.
   inpututil.press_and_release_key(inpututil.SWEEP)
-  time.sleep(random.uniform(0.5, 1.0))
+  time.sleep(random.uniform(0.1, 0.2))
 
 
 class SpoilThread(Thread):
