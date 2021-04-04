@@ -3,7 +3,7 @@ from enum import Enum
 
 class LineageApplication(Enum):
   REBORN = 'REBORN'
-  HELLSCAPE = 'HELLSCAPE'
+  HELLFORGE = 'HELLFORGE'
 
   def __str__(self):
     return self.value

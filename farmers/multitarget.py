@@ -5,7 +5,7 @@ from threading import Thread
 
 import inpututil
 import soundutil
-from farmers import hotkeyactions, aggromonitor
+from farmers import hotkeyactions, aggromonitor, mouseactions
 
 
 class SimpleMultiTargetFarm(Thread):
@@ -40,6 +40,11 @@ class SimpleMultiTargetFarm(Thread):
             should_seed_and_spoil = True
           else:
             should_seed_and_spoil = False
+          continue
+
+        # Try to target using the mouse first before resorting to the target macro.
+        valid_target_selected = mouseactions.select_target_with_mouse(self.screen_capture_thread, self.args.target_enum)
+        if valid_target_selected:
           continue
 
         # Implement the target selection logic. It needs to handle some edge cases:
