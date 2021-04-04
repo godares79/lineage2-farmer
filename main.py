@@ -146,6 +146,8 @@ def main():
     screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
     time.sleep(3)
 
+    mouseactions.select_target_with_mouse(screen_monitor, args.target_enum)
+
     print('Spacebar to exit.')
     keyboard.wait('spacebar')
     sys.exit(0)
