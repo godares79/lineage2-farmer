@@ -374,6 +374,36 @@ class ScreenObject:
     else:
       return False
 
+  def locate_target_screen_coordinates(self, target_bitmap, target_pixel_offset):
+    # I can speed up the cropping and masking by just doing it all in opencv/numpy. The cropping should not be done
+    # in Pillow.
+    polygon = ((0, 0), (0, 756), (352, 756), (352, 835), (1910, 835), (1910, 0))
+    mask_img = Image.new('L', self.pillow_image.size, 0)
+    draw = ImageDraw.Draw(mask_img)
+    draw.polygon(polygon, fill=255, outline=None)
+    black_img = Image.new('L', self.pillow_image.size, 0)
+    result = Image.composite(self.pillow_image, black_img, mask_img)
+
+    # Turn anything that isn't white into black. Makes OCR easier.
+    cv_img = cv2.cvtColor(np.asarray(result), cv2.COLOR_RGB2BGR)
+    white_low = np.array([240, 240, 240])
+    white_high = np.array([255, 255, 255])
+    mask = cv2.inRange(cv_img, white_low, white_high)
+    cv_img[mask == 0] = (0, 0, 0)
+
+    # Use template matching to locate intended targets
+    searcher_text = cv2.imread(os.path.join('images', target_bitmap))
+    template_result = cv2.matchTemplate(cv_img, searcher_text, cv2.TM_CCOEFF_NORMED)
+    match_location = np.where(template_result > 0.7)
+    if len(match_location[0]) >= 1 or len(match_location[1]) >= 1:
+      match_locations = []
+      for pt in zip(*match_location[::-1]):
+        # cv2.rectangle(cv_img, (pt[0] - 73, pt[1]), (pt[0] + 48, pt[1] + 15), (0, 0, 255), 1)
+        match_locations.append((pt[0] + target_pixel_offset[0], pt[1] + target_pixel_offset[1]))
+      return match_locations
+    else:
+      return None
+
   def antibot_text_on_screen(self):
     # Returns true if there is an unknown name (not my name, or the target's name on the display).
     # This can also realistically detect the bot captcha.

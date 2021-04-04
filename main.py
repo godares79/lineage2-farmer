@@ -47,9 +47,10 @@ import keyboard
 
 import antibotprotection
 from settings.farmingalgorithm import FarmingAlgorithm
-from farmers import hybridsingletarget, multitarget, aggromonitor
+from farmers import hybridsingletarget, multitarget, aggromonitor, mouseactions
 import resourcemonitor
 import screenmanagement
+from settings.intendedtargets import IntendedTarget
 from settings.lineageapplication import LineageApplication
 from settings.soulshotsetting import SoulshotSetting
 from settings.windowsetting import WindowSetting
@@ -76,6 +77,9 @@ parser.add_argument('-quest', dest='quest', default=False, action='store_true',
                     help='Specify if running quest(s).')
 parser.add_argument('-use_health_potions', dest='use_health_potions', default=False, action='store_true',
                     help='Specify if health potions should be used when health gets low.')
+parser.add_argument('-target_enum', dest='target_enum', required=False,
+                    type=IntendedTarget, choices=list(IntendedTarget), default=None,
+                    help='Intended target (should replace -target args).')
 
 parser.add_argument('-window_setting', dest='window_setting', required=True,
                     type=WindowSetting, choices=list(WindowSetting),
@@ -142,11 +146,11 @@ def main():
     screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
     time.sleep(3)
 
-    resource_monitor_thread = create_and_start_resource_monitor_thread(screen_monitor, False)
-    print(f'has_high_health: {resource_monitor_thread.has_high_health}')
-    print(f'has_low_health: {resource_monitor_thread.has_low_health}')
-    print(f'has_high_mana: {resource_monitor_thread.has_high_mana}')
-    print(f'has_low_mana: {resource_monitor_thread.has_low_mana}')
+    # Print out the intended target information.
+    print(f'Target: {args.target_enum}')
+    print(f'Full Name: {args.target_enum.full_name()}')
+    print(f'Name Bitmap Location: {args.target_enum.name_bitmap()}')
+    mouseactions.select_target_with_mouse(screen_monitor, args.target_enum)
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')

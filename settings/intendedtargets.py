@@ -2,7 +2,8 @@ from enum import Enum
 from collections import namedtuple
 
 # The selection offset is an (x, y) pixel tuple that is the offset from the template location to where the click
-# should be done to select the monster.
+# should be done to select the monster. The template match location is at the top left of the match location, so the
+# offset should start from there.
 TargetProperties = namedtuple(
   'TargetProperties',
   ['spawn_timeout', 'ocr_text', 'name_bitmap', 'full_name', 'selection_offset'])
@@ -12,7 +13,7 @@ def _properties_map():
   return {
     IntendedTarget.SPORE_FUNGUS: TargetProperties(
       spawn_timeout=30, ocr_text='fungus', name_bitmap='spore_fungus.bmp', full_name='Spore Fungus',
-      selection_offset=(0, 10)),
+      selection_offset=(37, 31)),
     IntendedTarget.GRIZZLY: TargetProperties(
       spawn_timeout=45, ocr_text='grizzly', name_bitmap='grizzly.bmp', full_name='Grizzly',
       selection_offset=(0, 10)),
@@ -49,3 +50,6 @@ class IntendedTarget(Enum):
 
   def full_name(self):
     return _properties_map()[self].full_name
+
+  def selection_offset(self):
+    return _properties_map()[self].selection_offset
