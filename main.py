@@ -147,6 +147,17 @@ def main():
     time.sleep(3)
 
     mouseactions.select_target_with_mouse(screen_monitor, args.target_enum)
+    time.sleep(1)
+    mouseactions.select_target_with_mouse(screen_monitor, args.target_enum)
+    time.sleep(1)
+    mouseactions.select_target_with_mouse(screen_monitor, args.target_enum)
+    time.sleep(1)
+    mouseactions.select_target_with_mouse(screen_monitor, args.target_enum)
+    time.sleep(1)
+    mouseactions.select_target_with_mouse(screen_monitor, args.target_enum)
+    time.sleep(1)
+    mouseactions.select_target_with_mouse(screen_monitor, args.target_enum)
+    time.sleep(1)
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')

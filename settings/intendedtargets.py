@@ -10,6 +10,9 @@ TargetProperties = namedtuple(
 
 
 def _properties_map():
+  # TODO: The selection offset should be different depending on REBORN or HELLFORGE. Reason being that REBORN
+  # does not allow you to zoom out as much and the render distance is lower, thus the mob will always be larger on
+  # screen.
   return {
     IntendedTarget.SPORE_FUNGUS: TargetProperties(
       spawn_timeout=30, ocr_text='fungus', name_bitmap='spore_fungus.bmp', full_name='Spore Fungus',
@@ -22,7 +25,7 @@ def _properties_map():
       selection_offset=(0, 10)),
     IntendedTarget.MONSTER_EYE_SEARCHER: TargetProperties(
       spawn_timeout=75, ocr_text='searcher', name_bitmap='monster_eye_searcher.bmp', full_name='Monster Eye Searcher',
-      selection_offset=(-13, 60))
+      selection_offset=(-13, 100))
   }
 
 
