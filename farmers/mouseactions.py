@@ -8,7 +8,8 @@ import pyautogui as pyautogui
 def select_target_with_mouse(screen_monitor, intended_target_enum):
   # Returns True if a valid target is selected. False if not.
   # TODO: This only works for fullscreen currently. Need to get windowed mode working eventually.
-  # TODO: Use a Bezier curve to make mouse movement more human like.
+  # TODO: Use a Bezier curve to make mouse movement more human like:
+  #   https://stackoverflow.com/questions/44467329/pyautogui-mouse-movement-with-bezier-curve
   for next_location in next(_cycle_to_next_valid_target(screen_monitor, intended_target_enum)):
     # Move the mouse cursor and click on the next target. If it is valid (present, not being attacked, etc.) then return
     # True.

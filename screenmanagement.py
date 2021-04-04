@@ -362,18 +362,6 @@ class ScreenObject:
     else:
       return False
 
-    # TODO: Using OpenCV template matching... I should use this in the future.
-    searcher_text = cv2.imread(os.path.join('images', 'monster_eye_searcher.bmp'))
-    template_result = cv2.matchTemplate(cv_img, searcher_text, cv2.TM_CCOEFF_NORMED)
-    match_location = np.where(template_result > 0.7)
-    if len(match_location[0]) >= 1 or len(match_location[1]) >= 1:
-      for pt in zip(*match_location[::-1]):
-        cv2.rectangle(cv_img, (pt[0] - 73, pt[1]), (pt[0] + 48, pt[1] + 15), (0, 0, 255), 1)
-        print(f'Intended Click Location: {pt[0] - 15}, {pt[1] + 20}')
-      return True
-    else:
-      return False
-
   def locate_target_screen_coordinates(self, target_bitmap, target_pixel_offset):
     # I can speed up the cropping and masking by just doing it all in opencv/numpy. The cropping should not be done
     # in Pillow.

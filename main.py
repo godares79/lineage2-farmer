@@ -146,11 +146,7 @@ def main():
     screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
     time.sleep(3)
 
-    # Print out the intended target information.
-    print(f'Target: {args.target_enum}')
-    print(f'Full Name: {args.target_enum.full_name()}')
-    print(f'Name Bitmap Location: {args.target_enum.name_bitmap()}')
-    mouseactions.select_target_with_mouse(screen_monitor, args.target_enum)
+    screen_monitor.get_screen_object().has_selected_target('Spore Fungus')
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')
