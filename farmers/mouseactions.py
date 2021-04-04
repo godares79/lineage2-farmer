@@ -18,8 +18,11 @@ def select_target_with_mouse(screen_monitor, intended_target_enum):
     # Move the mouse cursor and click on the next target. If it is valid (present, not being attacked, etc.) then return
     # True.
     randomized_next_location = (next_location[0] + random.randint(-10, 10), next_location[1] + random.randint(-10, 10))
+    frompoint = pyautogui.position()
     humanclicker = pyclick.HumanClicker()
-    humanclicker.move(randomized_next_location, 0.25)
+    humancurve = pyclick.HumanCurve(frompoint, randomized_next_location, offsetBoundaryX=10, offsetBoundaryY=10, targetPoints=30)
+    pyautogui.PAUSE = 0
+    humanclicker.move(randomized_next_location, duration=0.25, humanCurve=humancurve)
     pyautogui.mouseDown()
     time.sleep(random.uniform(0.1, 0.15))
     pyautogui.mouseUp()
