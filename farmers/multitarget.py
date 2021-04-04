@@ -121,7 +121,7 @@ class SimpleMultiTargetFarm(Thread):
         self.screen_capture_thread, self.stop_event,
         should_harvest=self.args.manor and should_seed_and_spoil,
         should_sweep=self.args.spoil and should_seed_and_spoil,
-        should_loot=True,
+        should_loot=False,
         should_sit=False)
 
       # At this point, sweep may have failed and we will still have the dead mob selected. If that is the case
@@ -147,12 +147,8 @@ class SimpleMultiTargetFarm(Thread):
           soundutil.warn()
 
       # Perform a final loot only after all attackers are dead.
-      # TODO: The loot macro isn't working too well. I should just hold down the loot hotkey for 2 or 3 seconds I think.
-      # The loot hotkey does not interrupt actions if there is nothing to loot, so I can continue targetting and moving
-      # to the next target which is great.
-      for i in range(1, random.randrange(7, 10, 1)):
-        hotkeyactions.loot(block=False)
-        time.sleep(0.25)
+      hotkeyactions.loot(block=False)
+      time.sleep(1)
       aggro_monitor.mark_as_completed()
 
       if self.resource_monitor_thread.has_low_health or self.resource_monitor_thread.has_low_mana:

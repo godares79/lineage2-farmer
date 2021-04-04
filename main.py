@@ -47,7 +47,7 @@ import keyboard
 
 import antibotprotection
 from settings.farmingalgorithm import FarmingAlgorithm
-from farmers import hybridsingletarget, multitarget, aggromonitor, mouseactions
+from farmers import hybridsingletarget, multitarget, aggromonitor, mouseactions, hotkeyactions
 import resourcemonitor
 import screenmanagement
 from settings.intendedtargets import IntendedTarget
@@ -145,8 +145,6 @@ def main():
     print(f'In testing mode. File: {args.testing_file}')
     screen_monitor = create_and_start_capture_thread(args.window_setting, args.testing, args.testing_file)
     time.sleep(3)
-
-    screen_monitor.get_screen_object().has_selected_target('Spore Fungus')
 
     print('Spacebar to exit.')
     keyboard.wait('spacebar')

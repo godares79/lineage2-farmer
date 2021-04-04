@@ -124,10 +124,10 @@ def sweep():
 
 
 def loot(block=False):
-  inpututil.press_and_release_key(inpututil.LOOT_MACRO)
-
   if block:
-    time.sleep(random.uniform(3.0, 5.0))
+    inpututil.press_and_release_key(inpututil.LOOT_MACRO, lower_bound_time=2.0, upper_bound_time=3.5)
+  else:
+    threading.Thread(target=inpututil.press_and_release_key, args=(inpututil.LOOT_MACRO, 2.5, 3.5)).start()
 
 
 def sit():

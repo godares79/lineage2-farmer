@@ -72,12 +72,5 @@ class HybridSingleTargetFarm(Thread):
         self.screen_capture_thread, self.stop_event,
         should_harvest=self.args.manor, should_sweep=self.args.spoil, should_loot=True, should_sit=self.args.sit)
 
-      # TODO: The loot macro isn't working too well. I should just hold down the loot hotkey for 2 or 3 seconds I think.
-      # The loot hotkey does not interrupt actions if there is nothing to loot, so I can continue targetting and moving
-      # to the next target which is great.
-      for i in range(1, random.randrange(6, 8, 1)):
-        hotkeyactions.loot(block=False)
-        time.sleep(0.25)
-
   def should_stop(self):
     self.stop_event.set()

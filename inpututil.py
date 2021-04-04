@@ -81,7 +81,7 @@ def release_key(key):
   ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 
-def press_and_release_key(key):
+def press_and_release_key(key, lower_bound_time=0.1, upper_bound_time=0.15):
   press_key(key)
-  time.sleep(random.uniform(0.1, 0.15))
+  time.sleep(random.uniform(lower_bound_time, upper_bound_time))
   release_key(key)
