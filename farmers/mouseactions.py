@@ -19,7 +19,7 @@ def select_target_with_mouse(screen_monitor, intended_target_enum):
 
     time.sleep(0.4)
 
-    selected_and_valid = (screen_monitor.get_screen_object().has_selected_target(intended_target_enum.full_name)
+    selected_and_valid = (screen_monitor.get_screen_object().has_selected_target(intended_target_enum.ocr_text())
                           and screen_monitor.get_screen_object().get_target_health() >= 100)
     if not selected_and_valid:
       continue

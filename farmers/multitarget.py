@@ -59,8 +59,6 @@ class SimpleMultiTargetFarm(Thread):
           print(f'Could not select {self.args.target}!')
           valid_target_selected = False
           soundutil.notify()
-          hotkeyactions.sit()
-          currently_sitting = True
           inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
           time.sleep(6)
           continue
@@ -70,8 +68,6 @@ class SimpleMultiTargetFarm(Thread):
           print(f'Target {self.args.target} health is less than 100%!')
           valid_target_selected = False
           soundutil.notify()
-          hotkeyactions.sit()
-          currently_sitting = True
           inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
           time.sleep(6)
           continue
@@ -83,8 +79,6 @@ class SimpleMultiTargetFarm(Thread):
           print(f'Target {self.args.target} cannot be seen!')
           valid_target_selected = False
           soundutil.notify()
-          hotkeyactions.sit()
-          currently_sitting = True
           inpututil.press_and_release_key(inpututil.CLEAR_TARGET)
           time.sleep(6)
           continue
