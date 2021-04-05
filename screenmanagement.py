@@ -50,15 +50,35 @@ class ScreenCaptureThread(Thread):
     self.screen_object = None
     self.stop_event = threading.Event()
     self.window_setting = window_setting
+    self.window_rectangle = None
+    self.sct = mss.mss()
 
     self.testing_mode = testing_mode
     self.testing_file = testing_file
+
+    if self.window_setting == WindowSetting.WINDOWED:
+      self.window_rectangle = self._get_window_rectangle()
+    elif self.window_setting == WindowSetting.FULLSCREEN:
+      self.window_rectangle = ScreenCaptureThread.Rectangle((0, 0, 1920, 1080))
+
+    if not self.window_rectangle:
+      print('\033[91mCould not get window dimensions. Unable to take screenshot.\033[0m')
+      return
 
   def stop(self):
     self.stop_event.set()
 
   def get_screen_object(self):
     return self.screen_object
+
+  def get_on_demand_screenshot(self, x, y, width, height):
+    # Modify the screenshot rectangle based on the self.window_rectangle.
+    new_rectangle = ScreenCaptureThread.Rectangle(
+      (self.window_rectangle.x + x, self.window_rectangle.y + y, 0, 0))
+    new_rectangle.width = width
+    new_rectangle.height = height
+    sct_img = self.sct.grab(new_rectangle.to_map())
+    return ScreenObject(Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX"), is_on_demand=True)
 
   def _get_window_rectangle(self):
     # Use EnumWindows to find the appropriate window I want. If I only do it at script startup then
@@ -123,32 +143,21 @@ class ScreenCaptureThread(Thread):
             screenshot_queue.put((time.time(), self.screen_object))
           screen_output_counter = 0
 
-    window_rectangle = None
-    if self.window_setting == WindowSetting.WINDOWED:
-      window_rectangle = self._get_window_rectangle()
-    elif self.window_setting == WindowSetting.FULLSCREEN:
-      window_rectangle = ScreenCaptureThread.Rectangle((0, 0, 1920, 1080))
+    while not self.stop_event.is_set():
+      sct_img = self.sct.grab(self.window_rectangle.to_map())
+      img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
 
-    if not window_rectangle:
-      print('\033[91mCould not get window dimensions. Unable to take screenshot.\033[0m')
-      return
+      self.screen_object = ScreenObject(img)
 
-    with mss.mss() as sct:
-      while not self.stop_event.is_set():
-        sct_img = sct.grab(window_rectangle.to_map())
-        img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
+      # My timing needs aren't enough to do any kind of thread scheduling. Just do a sleep for 0.2s.
+      time.sleep(0.2)
 
-        self.screen_object = ScreenObject(img)
-
-        # My timing needs aren't enough to do any kind of thread scheduling. Just do a sleep for 0.2s.
-        time.sleep(0.2)
-
-        # Add every 10th screenshot to the output queue.
-        screen_output_counter += 1
-        if screen_output_counter == 10:
-          if not screenshot_queue.full():
-            screenshot_queue.put((time.time(), self.screen_object))
-          screen_output_counter = 0
+      # Add every 10th screenshot to the output queue.
+      screen_output_counter += 1
+      if screen_output_counter == 10:
+        if not screenshot_queue.full():
+          screenshot_queue.put((time.time(), self.screen_object))
+        screen_output_counter = 0
 
 
 class ScreenObject:
@@ -160,11 +169,12 @@ class ScreenObject:
     UNKNOWN = 'UNKNOWN'
 
 
-  def __init__(self, pillow_image):
+  def __init__(self, pillow_image, is_on_demand=False):
     self.pillow_image = pillow_image
     self._system_message_text = None
     self._processed_target_text = None
     self._target_health_percent = None
+    self.is_on_demand = is_on_demand
 
   def get_health_percent(self):
     # Create opencv image for the health bar area.
@@ -365,12 +375,17 @@ class ScreenObject:
   def locate_target_screen_coordinates(self, target_bitmap, target_pixel_offset):
     # I can speed up the cropping and masking by just doing it all in opencv/numpy. The cropping should not be done
     # in Pillow.
-    polygon = ((0, 0), (0, 756), (352, 756), (352, 835), (1910, 835), (1910, 0))
-    mask_img = Image.new('L', self.pillow_image.size, 0)
-    draw = ImageDraw.Draw(mask_img)
-    draw.polygon(polygon, fill=255, outline=None)
-    black_img = Image.new('L', self.pillow_image.size, 0)
-    result = Image.composite(self.pillow_image, black_img, mask_img)
+
+    # If the screenshot is on demand assume that the bounding box is just the screenshot rectangle.
+    if self.is_on_demand:
+      result = self.pillow_image.copy()
+    else:
+      polygon = ((0, 0), (0, 756), (352, 756), (352, 835), (1910, 835), (1910, 0))
+      mask_img = Image.new('L', self.pillow_image.size, 0)
+      draw = ImageDraw.Draw(mask_img)
+      draw.polygon(polygon, fill=255, outline=None)
+      black_img = Image.new('L', self.pillow_image.size, 0)
+      result = Image.composite(self.pillow_image, black_img, mask_img)
 
     # Turn anything that isn't white into black. Makes OCR easier.
     cv_img = cv2.cvtColor(np.asarray(result), cv2.COLOR_RGB2BGR)
