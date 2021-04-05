@@ -174,6 +174,8 @@ class SimpleMultiTargetFarm(Thread):
             break
           time.sleep(3)
 
+      # TODO: Move this into a separate thread. The quest item may show up after the next iteration of the loop has
+      #  already begun. Works for now though.
       if self.args.quest:
         if self.screen_capture_thread.get_screen_object().has_quest_completed():
           soundutil.alert()
