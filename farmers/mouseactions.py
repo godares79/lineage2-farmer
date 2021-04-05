@@ -9,16 +9,17 @@ import pyautogui as pyautogui
 import pyclick as pyclick
 from scipy import interpolate
 
+import inpututil
 
 DistanceBucket = collections.namedtuple(
   'DistanceBucket',
   ['distance_upper_bound', 'minimum_duration', 'offset_boundary'])
 DISTANCE_TO_TIME_BUCKETS = (
-  DistanceBucket(distance_upper_bound=250, minimum_duration=0.14, offset_boundary=10),
-  DistanceBucket(distance_upper_bound=500, minimum_duration=0.16, offset_boundary=10),
-  DistanceBucket(distance_upper_bound=750, minimum_duration=0.18, offset_boundary=10),
-  DistanceBucket(distance_upper_bound=1000, minimum_duration=0.20, offset_boundary=10),
-  DistanceBucket(distance_upper_bound=2000, minimum_duration=0.22, offset_boundary=10)
+  DistanceBucket(distance_upper_bound=250, minimum_duration=0.16, offset_boundary=10),
+  DistanceBucket(distance_upper_bound=500, minimum_duration=0.18, offset_boundary=10),
+  DistanceBucket(distance_upper_bound=750, minimum_duration=0.20, offset_boundary=10),
+  DistanceBucket(distance_upper_bound=1000, minimum_duration=0.22, offset_boundary=10),
+  DistanceBucket(distance_upper_bound=2000, minimum_duration=0.24, offset_boundary=10)
 )
 
 
@@ -47,9 +48,6 @@ def select_target_with_mouse(screen_monitor, intended_target_enum):
         humancurve = pyclick.HumanCurve(frompoint, randomized_next_location,
                                         offsetBoundaryX=distance_bucket.offset_boundary, offsetBoundaryY=distance_bucket.offset_boundary, targetPoints=25)
         humanclicker.move(randomized_next_location, duration=random.uniform(distance_bucket.minimum_duration, distance_bucket.minimum_duration+0.05), humanCurve=humancurve)
-
-        # TODO: I should check that I have selected a target here. If I have not, then I should restart the loop and
-        #  stop moving.
         break
     pyautogui.mouseDown()
     time.sleep(random.uniform(0.1, 0.15))
@@ -60,7 +58,10 @@ def select_target_with_mouse(screen_monitor, intended_target_enum):
     selected_and_valid = (screen_monitor.get_screen_object().has_selected_target(intended_target_enum.ocr_text())
                           and screen_monitor.get_screen_object().get_target_health() >= 100)
     if not selected_and_valid:
-      continue
+      # Stop and then restart the entire loop with recursion.
+      inpututil.press_and_release_key(inpututil.MOVE_BACK, lower_bound_time=0.30, upper_bound_time=0.5)
+      time.sleep(0.4)
+      return select_target_with_mouse(screen_monitor, intended_target_enum)
     else:
       return True
 

@@ -5,6 +5,7 @@ import time
 PUL = ctypes.POINTER(ctypes.c_ulong)
 
 # ScanCode constants that I care about.
+# NOTE: The scancodes should be the QWERTY key as they may to a DVORAK layout (e.g., S == ; scancode).
 NEXT_TARGET = 0x3B       # F1
 TARGET_MACRO = 0x3C      # F2
 ATTACK = 0x3D            # F3
@@ -21,7 +22,7 @@ CTRL = 0x1D
 SHIFT = 0x2A
 ALT = 0x38
 CLEAR_TARGET = 0x01      # ESCAPE
-MOVE_BACK = 0x1F         # S
+MOVE_BACK = 0x27         # S (0x1F), ; (0x27)
 
 
 class KeyBdInput(ctypes.Structure):
