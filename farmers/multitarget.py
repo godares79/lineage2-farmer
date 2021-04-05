@@ -174,6 +174,11 @@ class SimpleMultiTargetFarm(Thread):
             break
           time.sleep(3)
 
+      if self.args.quest:
+        if self.screen_capture_thread.get_screen_object().has_quest_completed():
+          soundutil.alert()
+          return
+
   def should_stop(self):
     self.stop_event.set()
 

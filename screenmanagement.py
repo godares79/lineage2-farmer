@@ -588,6 +588,22 @@ class ScreenObject:
       return True
     return False
 
+  def has_quest_completed(self):
+    # Return True if the quest has completed. False if not.
+    quest_window_crop_img = self.pillow_image.crop((1600, 575, 1910, 1000))
+    quest_cvarr = cv2.cvtColor(np.asarray(quest_window_crop_img), cv2.COLOR_RGB2BGR)
+    white_text_mask = cv2.inRange(quest_cvarr, (250, 250, 250), (255, 255, 255))
+    quest_cvarr[white_text_mask == 0] = (0, 0, 0)
+    quest_cvarr[white_text_mask != 0] = (253, 253, 253)
+
+    spore_fungus_quest_completed = cv2.imread(os.path.join('images', 'spore_fungus_quest_completed_text.bmp'))
+    template_result = cv2.matchTemplate(quest_cvarr, spore_fungus_quest_completed, cv2.TM_CCOEFF_NORMED)
+    match_location = np.where(template_result > 0.7)
+    if len(match_location[0]) >= 1 or len(match_location[1]) >= 1:
+      return True
+    else:
+      return False
+
   def _get_system_message_text(self):
     if self._system_message_text:
       # Only parse the first time.
