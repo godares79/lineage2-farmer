@@ -9,6 +9,7 @@ from threading import Thread
 import inpututil
 import soundutil
 from farmers import hotkeyactions
+from settings.lineageapplication import LineageApplication
 
 
 class HybridSingleTargetFarm(Thread):
@@ -68,8 +69,9 @@ class HybridSingleTargetFarm(Thread):
       hotkeyactions.attack_mob(self.screen_capture_thread, self.stop_event, soulshot_setting=self.args.soulshot)
 
       if self.stop_event.is_set(): return
-      # Sleep a sec and REBORN is very slow.
-      time.sleep(random.uniform(0.6, 1.0))
+      if self.args.l2_app == LineageApplication.REBORN:
+        # Reborn uses L2J and it's pretty unresponsive, so add a short sleep.
+        time.sleep(random.uniform(0.6, 1.0))
       hotkeyactions.perform_closing_actions(
         self.screen_capture_thread, self.stop_event,
         should_harvest=self.args.manor, should_sweep=self.args.spoil, should_loot=False, should_sit=self.args.sit)
