@@ -15,11 +15,11 @@ DistanceBucket = collections.namedtuple(
   'DistanceBucket',
   ['distance_upper_bound', 'minimum_duration', 'offset_boundary'])
 DISTANCE_TO_TIME_BUCKETS = (
-  DistanceBucket(distance_upper_bound=250, minimum_duration=0.16, offset_boundary=10),
-  DistanceBucket(distance_upper_bound=500, minimum_duration=0.18, offset_boundary=10),
-  DistanceBucket(distance_upper_bound=750, minimum_duration=0.20, offset_boundary=10),
-  DistanceBucket(distance_upper_bound=1000, minimum_duration=0.22, offset_boundary=10),
-  DistanceBucket(distance_upper_bound=2000, minimum_duration=0.24, offset_boundary=10)
+  DistanceBucket(distance_upper_bound=250, minimum_duration=0.30, offset_boundary=15),
+  DistanceBucket(distance_upper_bound=500, minimum_duration=0.32, offset_boundary=20),
+  DistanceBucket(distance_upper_bound=750, minimum_duration=0.34, offset_boundary=25),
+  DistanceBucket(distance_upper_bound=1000, minimum_duration=0.40, offset_boundary=30),
+  DistanceBucket(distance_upper_bound=2000, minimum_duration=0.40, offset_boundary=35)
 )
 
 

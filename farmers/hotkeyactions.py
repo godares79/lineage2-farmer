@@ -121,13 +121,8 @@ def sweep():
 
 
 def loot(block=False):
-  iterations = random.randint(7, 9)
-  if block:
-    # TODO: This is to satisfy the slow loot in L2REBORN. I should instead have an if statement based on the l2_app.
-    time.sleep(random.uniform(1.0, 1.5))
-    inpututil.press_and_release_key(inpututil.LOOT_MACRO, lower_bound_time=0.4, upper_bound_time=0.7)
-  else:
-    threading.Thread(target=_loot_spam, args=(iterations, )).start()
+  time.sleep(random.uniform(1.0, 1.5))
+  inpututil.press_and_release_key(inpututil.LOOT_MACRO, lower_bound_time=0.4, upper_bound_time=0.7)
 
 
 def _loot_spam(iterations):
