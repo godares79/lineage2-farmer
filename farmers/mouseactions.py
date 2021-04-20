@@ -31,8 +31,8 @@ def select_target_with_mouse(screen_monitor, intended_target_enum):
     # True.
 
     # TODO: Only use a randomized location if using L2Reborn as we can't zoom out as far.
-    # randomized_next_location = (next_location[0] + random.randint(-10, 10), next_location[1] + random.randint(-10, 10))
-    randomized_next_location = (next_location[0], next_location[1])
+    randomized_next_location = (next_location[0] + random.randint(-10, 10), next_location[1] + random.randint(-10, 10))
+    # randomized_next_location = (next_location[0], next_location[1])
     frompoint = pyautogui.position()
     humanclicker = pyclick.HumanClicker()
     pyautogui.PAUSE = 0
@@ -85,3 +85,23 @@ def _calculate_distance_from_center(point):
 
 def _calculate_distance_between_two_points(fromPoint, toPoint):
   return sqrt(((toPoint[0]-fromPoint[0])**2)+((toPoint[1]-fromPoint[1])**2))
+
+
+def pan_mouse_to_locate_target(screen_monitor, intended_target_enum, use_camera_hotkey=False, timeout=0):
+  # TODO: Use the minimap in the top right corner of the UI to guide panning.
+  has_timeout = timeout > 0
+  if use_camera_hotkey:
+    # Press the hotkey for flipping the camera angle and check for mobs. If no target gets selected, begin to pan the
+    # mouse instead.
+    inpututil.press_and_release_key(inpututil.FLIP_CAMERA)
+    time.sleep(random.uniform(1.1, 1.6))
+    if select_target_with_mouse(screen_monitor, intended_target_enum):
+      return True
+
+  # Use the mouse to pan the camera.
+  pass
+
+
+def orient_screen_to_direction(screen_monitor, direction_enum):
+  # TODO: Use the minimap as the guide when determining the direction to orient.
+  pass

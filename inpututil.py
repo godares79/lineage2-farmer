@@ -23,6 +23,7 @@ SHIFT = 0x2A
 ALT = 0x38
 CLEAR_TARGET = 0x01      # ESCAPE
 MOVE_BACK = 0x27         # S (0x1F), ; (0x27)
+FLIP_CAMERA = 0xCF + 1024  # END
 
 
 class KeyBdInput(ctypes.Structure):

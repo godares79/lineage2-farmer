@@ -106,6 +106,8 @@ def create_and_start_farming_thread(args, capture_thread, resource_monitor):
     farming_thread = hybridsingletarget.HybridSingleTargetFarm(args, capture_thread)
   elif args.farm_type == FarmingAlgorithm.BASIC_MULTI_TARGET:
     farming_thread = multitarget.SimpleMultiTargetFarm(args, capture_thread, resource_monitor)
+  elif args.farm_type == FarmingAlgorithm.COMPLEX_MULTI_TARGET:
+    farming_thread = multitarget.ComplexMultiTargetFarm(args, capture_thread, resource_monitor)
   else:
     raise ValueError(f'Value of args.farm_type is unimplemented: {args.farm_type}')
 
