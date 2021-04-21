@@ -45,7 +45,7 @@ class SimpleMultiTargetFarm(Thread):
 
         # Try to target using the mouse first before resorting to the target macro. Try to do so for up to 10 seconds.
         for i in range(1, 10):
-          valid_target_selected = mouseactions.select_target_with_mouse(self.screen_capture_thread, self.args.target_enum)
+          valid_target_selected = mouseactions.select_target_with_mouse(self.screen_capture_thread, self.args.target_enum, self.args.l2_app)
           if valid_target_selected:
             break
           time.sleep(1)
@@ -222,7 +222,7 @@ class ComplexMultiTargetFarm(Thread):
 
         # Try to target using the mouse first before resorting to the target macro. Try to do so for up to 50 seconds.
         for i in range(1, 50):
-          valid_target_selected = mouseactions.select_target_with_mouse(self.screen_capture_thread, self.args.target_enum)
+          valid_target_selected = mouseactions.select_target_with_mouse(self.screen_capture_thread, self.args.target_enum, self.args.l2_app)
           if valid_target_selected:
             break
           time.sleep(1)
@@ -299,7 +299,7 @@ class ComplexMultiTargetFarm(Thread):
       # Perform a final loot only after all attackers are dead.
       hotkeyactions.loot(block=False)
       if self.args.l2_app == LineageApplication.REBORN:
-        time.sleep(random.uniform(4, 5))
+        time.sleep(random.uniform(3, 4))
       else:
         time.sleep(1)
       aggro_monitor.mark_as_completed()

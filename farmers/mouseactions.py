@@ -10,6 +10,7 @@ import pyclick as pyclick
 from scipy import interpolate
 
 import inpututil
+from settings.lineageapplication import LineageApplication
 
 DistanceBucket = collections.namedtuple(
   'DistanceBucket',
@@ -23,16 +24,19 @@ DISTANCE_TO_TIME_BUCKETS = (
 )
 
 
-def select_target_with_mouse(screen_monitor, intended_target_enum):
+def select_target_with_mouse(screen_monitor, intended_target_enum, l2_app):
   # Returns True if a valid target is selected. False if not.
   # TODO: This only works for fullscreen currently. Need to get windowed mode working eventually.
-  for next_location in next(_cycle_to_next_valid_target(screen_monitor, intended_target_enum)):
+  for next_location in next(_cycle_to_next_valid_target(screen_monitor, intended_target_enum, l2_app)):
     # Move the mouse cursor and click on the next target. If it is valid (present, not being attacked, etc.) then return
     # True.
 
-    # TODO: Only use a randomized location if using L2Reborn as we can't zoom out as far.
-    randomized_next_location = (next_location[0] + random.randint(-10, 10), next_location[1] + random.randint(-10, 10))
-    # randomized_next_location = (next_location[0], next_location[1])
+    # Only use a randomized location if using L2Reborn as we can't zoom out as far.
+    if l2_app == LineageApplication.REBORN:
+      randomized_next_location = (next_location[0] + random.randint(-10, 10),
+                                  next_location[1] + random.randint(-10, 10))
+    else:
+      randomized_next_location = (next_location[0], next_location[1])
     frompoint = pyautogui.position()
     humanclicker = pyclick.HumanClicker()
     pyautogui.PAUSE = 0
@@ -61,20 +65,25 @@ def select_target_with_mouse(screen_monitor, intended_target_enum):
       # Stop and then restart the entire loop with recursion.
       inpututil.press_and_release_key(inpututil.MOVE_BACK, lower_bound_time=0.30, upper_bound_time=0.5)
       time.sleep(0.4)
-      return select_target_with_mouse(screen_monitor, intended_target_enum)
+      return select_target_with_mouse(screen_monitor, intended_target_enum, l2_app)
     else:
       return True
 
   return False
 
 
-def _cycle_to_next_valid_target(screen_monitor, intended_target_enum):
+def _cycle_to_next_valid_target(screen_monitor, intended_target_enum, l2_app):
   match_locations = screen_monitor.get_on_demand_screenshot(0, 0, 1910, 850).locate_target_screen_coordinates(
     intended_target_enum.name_bitmap(), intended_target_enum.selection_offset())
   if not match_locations: yield []
 
   # Cycle outwards from the center of the screen to select the next target.
-  match_locations.sort(key=_calculate_distance_from_center)
+  # Do a reverse sort if Reborn as we can't zoom out very far and render distance is short.
+  if l2_app == LineageApplication.REBORN:
+    match_locations.sort(key=_calculate_distance_from_center, reverse=True)
+  else:
+    match_locations.sort(key=_calculate_distance_from_center)
+
   yield match_locations
 
 
