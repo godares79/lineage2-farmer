@@ -97,6 +97,7 @@ def _calculate_distance_between_two_points(fromPoint, toPoint):
 
 
 def pan_mouse_to_locate_target(screen_monitor, intended_target_enum, use_camera_hotkey=False, timeout=0):
+  # https://stackoverflow.com/questions/1181464/controlling-mouse-with-python
   # TODO: Use the minimap in the top right corner of the UI to guide panning.
   has_timeout = timeout > 0
   if use_camera_hotkey:

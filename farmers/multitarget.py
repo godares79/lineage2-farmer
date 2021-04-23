@@ -187,7 +187,7 @@ class SimpleMultiTargetFarm(Thread):
 
 
 # Multi-target farming. Pans the mouse around the screen to locate other mobs with the same name.
-# On Hellforge, can use an edited l2.ini to increase name dislay distance and zoom distance.
+# On Hellforge, can use an edited l2.ini to increase name display distance and zoom distance.
 # On Reborn, can not edit l2.ini so name display distance will be fairly short.
 class ComplexMultiTargetFarm(Thread):
   def __init__(self, args, screen_capture_thread, resource_monitor_thread):
@@ -317,11 +317,6 @@ class ComplexMultiTargetFarm(Thread):
             break
           time.sleep(3)
 
-
-  def _pan_screen(self):
-    # Hold down the right mouse button and move the mouse slightly to pan.
-    # Use https://stackoverflow.com/questions/1181464/controlling-mouse-with-python
-    pass
 
   def should_stop(self):
     self.stop_event.set()

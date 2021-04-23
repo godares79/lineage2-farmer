@@ -25,7 +25,10 @@ def _properties_map():
       selection_offset=(0, 10)),
     IntendedTarget.MONSTER_EYE_SEARCHER: TargetProperties(
       spawn_timeout=75, ocr_text='searcher', name_bitmap='monster_eye_searcher.bmp', full_name='Monster Eye Searcher',
-      selection_offset=(-13, 100))
+      selection_offset=(-13, 70)),
+    IntendedTarget.OL_MAHUM_RAIDER: TargetProperties(
+      spawn_timeout=50, ocr_text='raider', name_bitmap='ol_mahum_raider.bmp', full_name='Ol Mahum Raider',
+      selection_offset=(40, 30))
   }
 
 

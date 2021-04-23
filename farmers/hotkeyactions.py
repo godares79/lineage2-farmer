@@ -95,6 +95,7 @@ def perform_closing_actions(screen_monitor_thread,
                             should_sweep=False,
                             should_loot=False,
                             should_sit=False):
+  time.sleep(random.uniform(0.2, 0.4))  # TODO: Reborn only.
   if stop_event.is_set(): return
   if should_harvest:
     harvest(screen_monitor_thread)
