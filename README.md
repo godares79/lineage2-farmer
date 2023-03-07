@@ -1,4 +1,9 @@
 # lineage2-farmer
+
+| :exclamation:  WARNING                                                        |
+|:------------------------------------------------------------------------------|
+| I wrote this when I was playing L2 on some private servers as a way to play around with Python. This isn't actually feasible, but it was fun. Any kind of newer game will block the automated keypresses being done here. And older games can be memory mapped or have their packets manipulated.   |
+
 Lineage 2 Farming Bot
 
 Meant to run on Windows. Stuff like mouse movement and keypress injection is windows specific.
@@ -9,4 +14,3 @@ Has dependencies on:
 - OpenCV
 - Pillow
 
-Eventually would like to extend this to SWG and other new games. Good potential for farming and selling.
